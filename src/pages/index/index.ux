@@ -1,0 +1,52 @@
+<template>
+  <div class="demo-page">
+    <qrcode value="{{ qrcode }}" ></qrcode>
+    <!-- 点击跳转详情页 -->
+    <input class="btn" type="button" value="跳转到详情页" onclick="routeDetail" />
+  </div>
+</template>
+
+<script>
+import BUFF from "../../buff/buff"
+import fetch from "../../utils/fetch"
+
+const buff=new BUFF(fetch)
+export default {
+  // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
+  private: {
+    qrcode: "示例页面"
+  },
+
+  routeDetail() {
+    buff.login((url, status) => {
+      this.qrcode = url
+    }).catch(err=>console.log(err))
+  }
+}
+</script>
+
+<style>
+.demo-page {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+qrcode{
+  width: 80%;
+  height: 80%
+}
+.title {
+  font-size: 20px;
+  text-align: center;
+}
+
+.btn {
+  width: 200px;
+  height: 40px;
+  margin-top: 20px;
+  border-radius: 5px;
+  background-color: #09ba07;
+  font-size: 20px;
+  color: #ffffff;
+}
+</style>
