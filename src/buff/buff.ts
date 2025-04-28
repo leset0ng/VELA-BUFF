@@ -1,7 +1,9 @@
 import Cookies from "./cookiesManager"
 import getDeviceID from "./deviceID"
 export default class BUFF{
-    constructor(fetch) {
+    private cookies: Cookies
+    private fetch: (uri: string, options?: any) => Promise<Response>
+    constructor(fetch:(uri:string,options?:any)=>Promise<Response>) {
         this.cookies = new Cookies()
         this.fetch = (uri, options) => fetch(uri, {
             ...options, headers: {
@@ -21,20 +23,19 @@ export default class BUFF{
         const setCookies = (await this.fetch("https://buff.163.com/account/login")).headers["set-cookie"]
         this.cookies.setCookies(setCookies)
         if (!this.cookies.getCookie("csrf_token")) throw new Error("csrf_token not found")
-        if (!await (await this.fetch("https://buff.163.com/account/api/qr_code_login_open")).body.json().data["use_qr_code_login"]) throw new Error("qr_code_create failed")
-        const {url, code_id} = await (await this.fetch("https://buff.163.com/account/api/qr_code_create",
+        if (!(await (await this.fetch("https://buff.163.com/account/api/qr_code_login_open")).json())?.data["use_qr_code_login"]) throw new Error("qr_code_create failed")
+        const {url, code_id} = (await (await this.fetch("https://buff.163.com/account/api/qr_code_create",
             {
                 body: { "code_type": 1, "extra_param": "{}" },
                 headers: { referer: "https://buff.163.com/account/login" ,"Content-Type": "application/json"},
                 method: "POST"
-            }))
-            .body.json().data
+            })).json()).data
         qrcodeCallback(url, 1)
         let status = 1
         do {
             await new Promise((resolve) => setTimeout(resolve, 1000))
-            const { headers, body } = await this.fetch("https://buff.163.com/account/api/qr_code_poll?item_id=" + code_id)
-            status = await body.json().data.state
+            const res = await this.fetch("https://buff.163.com/account/api/qr_code_poll?item_id=" + code_id)
+            status = (await res.json()).data.state
             console.log(status)
             switch (status) {
                 case 1:
@@ -44,7 +45,7 @@ export default class BUFF{
                     break
                 case 3:
                     qrcodeCallback(url, 3)
-                    this.cookies.setCookies(headers["set-cookie"])
+                    this.cookies.setCookies(res.headers["set-cookie"])
                     break
                 default:
                     qrcodeCallback(url, 5)
@@ -66,10 +67,10 @@ export default class BUFF{
     async logout() {
         // TODO: 退出登录
     }
-    async getUserInfo() { 
-        return (await this.fetch("https://buff.163.com/account/api/user/info/v2")).body.json().data?.user_info
+    async getUserInfo() {
+        return (await(await this.fetch("https://buff.163.com/account/api/user/info/v2")).json()).data.user_info
     }
-    async getUserInventory() { 
-        
+    async getUserInventory() {
+
     }
 }

@@ -7,16 +7,10 @@ export default function (url, options) {
             data: options.body,
             responseType:"text",
             success: (res) => {
-                console.log(res.data)
-                resolve({
-                    body: {
-                        json: () => JSON.parse(res.data),
-                        valueOf: () => res.data
-                    }
-                    , status: res.code
-                    , headers: res.headers
-                    , ok: res.code === 200,
-                })
+                resolve(new Response(res.data, {
+                    headers: res.headers,
+                    status:res.code
+                }))
             },
             fail: (data, code) => {
                 reject({ data, code })
