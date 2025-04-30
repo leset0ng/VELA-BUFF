@@ -1,5 +1,5 @@
 import fetch from "@system.fetch"
-export default function (url, options) {
+export default function (url, options,debug=false) {
     console.log(url, options)
     return new Promise((resolve, reject) => {
         fetch.fetch({
@@ -7,6 +7,7 @@ export default function (url, options) {
             data: options.body,
             responseType:"text",
             success: (res) => {
+                if(debug)console.log(res)
                 resolve(new Response(res.data, {
                     headers: res.headers,
                     status:res.code
@@ -19,4 +20,13 @@ export default function (url, options) {
             },
         })
     })
+}
+
+class Response {
+    constructor(data, { headers, status }) {
+        this.data = data
+        this.headers = headers
+        this.status = status
+    }
+    json() { return JSON.parse(this.data) }
 }

@@ -1,0 +1,44 @@
+<template>
+    <div style="{{style}}">
+        <img src="{{src}}" alt="{{alt}}" onclick="viewBig" if="{{update}}" style="{{style}}"/>
+        <img src="{{src}}" alt="{{alt}}" onclick="viewBig" else style="{{style}}"/>
+    </div>
+</template>
+
+<script>
+import { getImage } from "@utils/imgCache"
+import router from "@system.router"
+export default {
+    props: ["url", "alt", "style"],
+    private: {
+        src: "",
+        update: false
+    },
+    onInit() {
+        if(this.url)this.setUrl()
+        this.$watch("url", "setUrl")
+    },
+    viewBig() {
+        router.push({ uri: "pages/bigImg", params: { uri: this.src } })
+    },async setUrl() {
+            try {
+                console.log("setUrl", this.url)
+                this.src = this.url
+                this.update = !this.update
+                console.log("setUrl", this.src)
+                this.alt = this.src = (await getImage(this.url))
+                this.update = !this.update
+                
+            } catch (error) {
+                console.log(error)
+            }
+    }
+ }
+</script>
+
+<style>
+img{
+    width: 100%;
+    height: 100%;
+}
+</style>

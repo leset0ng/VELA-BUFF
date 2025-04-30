@@ -1,10 +1,9 @@
 <script>
+import BUFF from "./buff/buff"
+import fetch from "./utils/fetch"
+
+const buff=new BUFF(fetch)
 export default {
-  onCreate() {
-    console.log("app created")
-  },
-  onDestroy() {
-    console.log("app destroyed")
-  }
+  buff
 }
 </script>

@@ -5,3 +5,4 @@
 /dist
 /build
 .husky/
+/src/buildinfo.ts

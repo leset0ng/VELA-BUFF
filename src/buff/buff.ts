@@ -1,35 +1,47 @@
 import Cookies from "./cookiesManager"
 import getDeviceID from "./deviceID"
+import { User } from "./user"
+import buffImg from "./buffImg"
 export default class BUFF{
-    private cookies: Cookies
-    private fetch: (uri: string, options?: any) => Promise<Response>
-    constructor(fetch:(uri:string,options?:any)=>Promise<Response>) {
+    cookies: Cookies
+    get headers() { 
+        return {
+            origin: "https://buff.163.com", referer: "https://buff.163.com/", "x-requested-with": "XMLHttpRequest",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.51",
+            cookie: this.cookies.toString(),
+            "x-csrftoken": this.cookies.getCookie("csrf_token"),
+            Accept: "*/*",
+            AcceptEncoding: "gzip, deflate, br",
+        }
+    }
+    private fetch: (uri: string, options?: RequestInit) => Promise<Response>
+    constructor(fetch: (uri: string, options?: RequestInit)=>Promise<Response>) {
         this.cookies = new Cookies()
-        this.fetch = (uri, options) => fetch(uri, {
-            ...options, headers: {
-                origin: "https://buff.163.com", referer: "https://buff.163.com/","x-requested-with": "XMLHttpRequest",
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.51",
-                ...options?.headers, cookie: this.cookies.toString(),
-                "x-csrftoken": this.cookies.getCookie("csrf_token"),
-                Accept: "*/*",
-                AcceptEncoding: "gzip, deflate, br",
-            }
-        })
+        this.fetch = async (uri, options) => {
+            const resp=await fetch(uri, {
+                ...options, headers: {
+                    ...this.headers, ...options?.headers
+                }
+            })
+            this.cookies.setCookies(resp.headers["set-cookie"])
+            return resp
+        }
         this.cookies.setCookie("Locale-Supported","zh-Hans")
     }
-    async login(qrcodeCallback = (uri,status) => {
+    async login(qrcodeCallback = (uri:string,status:number) => {
         console.log("qrcode",uri)
     }) {
-        const setCookies = (await this.fetch("https://buff.163.com/account/login")).headers["set-cookie"]
-        this.cookies.setCookies(setCookies)
+        await this.fetch("https://buff.163.com/account/login")
         if (!this.cookies.getCookie("csrf_token")) throw new Error("csrf_token not found")
         if (!(await (await this.fetch("https://buff.163.com/account/api/qr_code_login_open")).json())?.data["use_qr_code_login"]) throw new Error("qr_code_create failed")
-        const {url, code_id} = (await (await this.fetch("https://buff.163.com/account/api/qr_code_create",
+        const {code,data} = (await (await this.fetch("https://buff.163.com/account/api/qr_code_create",
             {
-                body: { "code_type": 1, "extra_param": "{}" },
+                body: JSON.stringify({ "code_type": 1, "extra_param": "{}" }),
                 headers: { referer: "https://buff.163.com/account/login" ,"Content-Type": "application/json"},
                 method: "POST"
-            })).json()).data
+            })).json())
+        if(code !== "OK") throw new Error("获取二维码失败，你是否已经登录？")
+        const {url,code_id} = data
         qrcodeCallback(url, 1)
         let status = 1
         do {
@@ -52,25 +64,29 @@ export default class BUFF{
                     throw new Error("登录失败！")
             }
         } while (status <= 2)
-        this.cookies.setCookies((await this.fetch("https://buff.163.com/account/api/qr_code_login",
+        (await this.fetch("https://buff.163.com/account/api/qr_code_login",
             {
-                body: {
+                body:JSON.stringify({
                     "item_id": code_id, web_device_id: await getDeviceID()
-                },
+                }) ,
                 headers: { "Content-Type": "application/json" },
                 method: "POST"
             }
-        )).headers["set-cookie"])
+        )).headers["set-cookie"]
         this.cookies.saveCookies()
         return true
     }
     async logout() {
-        // TODO: 退出登录
+        this.cookies.clear()
+        await this.fetch("https://buff.163.com/account/logout")
     }
     async getUserInfo() {
-        return (await(await this.fetch("https://buff.163.com/account/api/user/info/v2")).json()).data.user_info
+        return (await(await this.fetch("https://buff.163.com/account/api/user/info/v2")).json()).data.user_info as User
     }
     async getUserInventory() {
 
+    }
+    static getBuffImg(url: string) {
+        return new buffImg(url)
     }
 }

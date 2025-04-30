@@ -14,6 +14,18 @@
     },
     {
       "name": "system.storage"
+    },
+    {
+      "name": "system.prompt"
+    },
+    {
+      "name": "system.file"
+    },
+    {
+      "name": "system.request"
+    },
+    {
+      "name": "system.crypto"
     }
   ],
   "config": {
@@ -21,13 +33,16 @@
     "designWidth": 480
   },
   "router": {
-    "entry": "pages/index",
+    "entry": "pages/user",
     "pages": {
-      "pages/index": {
+      "pages/login": {
         "component": "index"
       },
-      "pages/detail": {
-        "component": "detail"
+      "pages/user": {
+        "component": "index"
+      },
+      "pages/bigImg": {
+        "component": "index"
       }
     }
   }

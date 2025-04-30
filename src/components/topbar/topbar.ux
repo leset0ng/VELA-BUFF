@@ -1,0 +1,73 @@
+<template>
+  <div class="topbar">
+    <img src="./top-background.png" class="img"/>
+    <text class="title" onClick="handleBackPress">< {{title}}</text>
+    <text class="time">{{time}}</text>
+  </div>
+</template>
+
+<script>
+import router from "@system.router"
+export default {
+  props: ["title","onBack"],
+  private: {
+    time:"09:28"
+  },
+  onInit() {
+    console.log("topbar onInit")
+    const updTime = () => {
+      const now = new Date();
+      this.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    }
+    updTime();
+    setInterval(updTime, 1000);
+  }, onBackPress() {
+    return this.handleBackPress();
+  },
+  handleBackPress() {
+    if (this.onBack) {
+      if (this.onBack()) { return true }
+      router.back();
+    }
+    else {
+      router.back();
+    }
+    return true
+   }
+ }
+</script>
+
+<style>
+.topbar {
+    height: 58px;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    padding-top: 16px;
+}
+.img{
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   top: 0px;
+}
+.title .time{
+   font-size: 32px;
+   bottom: 2px;
+   position: absolute;
+   color: #fff;
+   font-weight: bold;
+   lines:1;
+   top: 16px;
+}
+.title{
+  text-align: left;
+  width: 80%;
+  left: 16px;
+  text-align: left;
+}
+.time{
+  right: 16px;
+  text-align: right;
+}
+</style>

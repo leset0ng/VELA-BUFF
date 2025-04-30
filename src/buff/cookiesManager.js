@@ -11,7 +11,8 @@ export default class cookies {
     }
     setCookie(key, value) {
         if (!key) return
-        this.cookies.set(key, value)
+        if(value==undefined) return this.cookies.delete(key)
+        return this.cookies.set(key, value)
     }
     setCookies(cookies) {
         cookies.split(";").forEach((cookie) => {
@@ -48,5 +49,9 @@ export default class cookies {
         return [...this.cookies].map(([key, value]) => {
             return value? `${key}=${value}` : ""
         }).join("; ")
+    }
+    clear() {
+        this.cookies.clear()
+        this.saveCookies()
     }
 }
