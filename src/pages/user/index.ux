@@ -4,40 +4,49 @@
   <div class="page">
     <div class="card" onclick="goLogin">
       <betterImg url="{{avatar}}" style="height: 50px;width: 50px;border-radius: 100%;"></betterImg>
-      <text class="nickname">{{nickname}}</text>
-
+      <text class="nickname">{{logined?nickname:"点击此处登录 >"}}</text>
     </div>
+    <div class="card" if="{{logined}}">
+        <text class="title">手机号</text>
+        <text class="content">{{mobile}}</text>
+      </div>
+      <div class="card" if="{{logined}}">
+        <text class="title">SteamID</text>
+        <text class="content">{{steamid}}</text>
+      </div>
+      <div class="card" onclick="logout" if="{{logined}}">
+        <text class="title">退出登录 ></text>
+      </div>
     <topbar title="用户详情"></topbar>
   </div>
 </template>
 
 <script>
-let app
 import textCache from "@utils/textCache"
 import router from "@system.router"
 
-let logined = false
 export default {
   // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
   private: {
+    logined: false,
     id: "U7355608",
     nickname: "buff用户",
-    avatar: "",
+    avatar: "/common/avatar.jpg",
     mobile: "",
     steamid: ""
   },
-  onInit() {
-    app = this.$app.$def
+  onShow() {
     textCache(async () => {
-      const user = await app.buff.getUserInfo()
-      const avatar = app.buff.getBuffImg(user.avatar)
+      const user = await globalThis.buff.getUserInfo()
+      const avatar = globalThis.buff.getBuffImg(user.avatar)
+      avatar.fops.set("imageView", 2)
       avatar.fops.set("h", 80)
       avatar.fops.set("w", 80)
       user.avatar = avatar.toString()
       return JSON.stringify(user)
     }, "user", (user) => {
       if (!user) return
-      logined = true
+      this.logined = true
       user = JSON.parse(user)
       this.id = user.id
       this.avatar = user.avatar
@@ -46,8 +55,12 @@ export default {
       this.steamid = user.steamid
     }).catch(console.error)
   }, goLogin() {
-    if (logined) return
+    if (this.logined) return
     router.push({ uri: "/pages/login" })
+  }, logout() {
+    globalThis.buff.logout()
+    this.logined = false
+    this.avatar = "/common/avatar.jpg"
   }
 }
 </script>
@@ -63,6 +76,24 @@ export default {
   padding: 10px;
   background-color: #262626;
   border-radius: 36px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.title{
+  margin: 10px;
+  font-size: 28px;
+  color: #ffffff;
+}
+.content{
+  margin: 10px;
+  font-size: 24px;
+  color: #ffffff;
+  text-align: left;
+}
+.nickname{
+  margin: 10px;
+  font-size: 28px;
+  color: #ffffff;
 }
 .qrcodeWrapper {
   width: 80%;

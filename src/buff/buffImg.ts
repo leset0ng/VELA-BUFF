@@ -7,9 +7,8 @@ export default class buffImg {
         this.fops = buffImg.fopPraser(fop)
     }
     toString() {
-        return this.uri + '?fop=' + encodeURIComponent(
-            Array.from(this.fops.entries()).map(([key, value]) => `${key}/${value}`).join('/')
-        )
+        const str= this.uri + '?fop=' + Array.from(this.fops.entries()).map(([key, value]) => `${key}/${value}`).join('/')
+        return str
     }
     static splitUrlAndFop(url: string) {
         const m = url.match(/^([^?]+)(\?[^#]*)?(#.*)?$/);

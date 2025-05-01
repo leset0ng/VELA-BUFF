@@ -1,7 +1,7 @@
 import file from '@system.file' 
 import request from '@system.request' 
 import crypto from '@system.crypto'
-import runAsyncFunc from "@utils/runAsyncFunc"
+import runAsyncFunc from "./runAsyncFunc"
 
 /**
  * 获取图片的缓存路径,如果没有缓存则下载并缓存
@@ -12,17 +12,20 @@ import runAsyncFunc from "@utils/runAsyncFunc"
 export async function getImage(url) {
     const cachePath = getCachePath(url)
     try {
-        await runAsyncFunc(file.access, { uri: cachePath })
+        const res = await runAsyncFunc(file.access, { uri: cachePath })
+        console.log("getImage cached", url, cachePath,res)
         return cachePath
     } catch (e) {
-        if(e.code !== 301) throw e
+        if (e.code !== 301) throw e
     }
+    console.log("getImage cached", url, cachePath)
     const { token } = await runAsyncFunc(request.download, { url, filename: cachePath })
+    console.log("getImage download", url, cachePath, token)
     return (await runAsyncFunc(request.onDownloadComplete, { token })).uri
 }
 
 function getCachePath(url) {
-    const name = crypto.hashDigest({ data: url })
+    const name = crypto.hashDigest({ data: url, algo: "MD5" })
     console.log("getCachePath", url, name)
     return `internal://cache/images/${name}.jpg`
 }

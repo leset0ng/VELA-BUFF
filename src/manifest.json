@@ -1,6 +1,6 @@
 {
-  "package": "com.application.watch.demo",
-  "name": "buff",
+  "package": "com.lst.buff",
+  "name": "BUFF",
   "versionName": "1.0.0",
   "versionCode": 1,
   "minPlatformVersion": 1000,

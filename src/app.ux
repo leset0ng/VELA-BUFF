@@ -2,7 +2,8 @@
 import BUFF from "./buff/buff"
 import fetch from "./utils/fetch"
 
-const buff=new BUFF(fetch)
+const buff = new BUFF(fetch)
+globalThis.buff = buff
 export default {
   buff
 }

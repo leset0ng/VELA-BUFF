@@ -13,10 +13,10 @@
 </template>
 
 <script>
-let app
-import router from "@system.router"
-import prompt from '@system.prompt' 
+import router from '@system.router'
+import prompt from '@system.prompt'
 
+let abortController
 export default {
   // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
   private: {
@@ -24,7 +24,6 @@ export default {
     qrStatus: 0,
   },
   onInit() {
-    app = this.$app.$def
     this.login()
   },
   async login() {
@@ -34,27 +33,40 @@ export default {
       this.qrStatus = status
     }
     try {
-      await app.buff.login(callback)
+      abortController = {
+        signal: { aborted: false },
+        abort() { this.signal.aborted = true }
+      }
+      await globalThis.buff.login(abortController,callback)
       router.back()
     } catch (e) { 
       prompt.showToast({ message: `登录失败，${e.message}` })
       console.log(e)
     }
+  }, onDestroy() {
+    if(abortController) abortController.abort()
   }
 }
 </script>
 
 <style>
+qrcode{
+  width: 280px;
+  height: 280px;
+  position: absolute;
+  top:10px;
+  left:10px;
+}
 .demo-page {
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 .qrcodeWrapper {
-  width: 80%;
-  height: 80%;
+  width: 300px;
+  height: 300px;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 20px;
   justify-content: center;
   align-items: center;
   padding: 20px;

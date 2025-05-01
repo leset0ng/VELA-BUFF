@@ -28,13 +28,15 @@ export default class BUFF{
         }
         this.cookies.setCookie("Locale-Supported","zh-Hans")
     }
-    async login(qrcodeCallback = (uri:string,status:number) => {
+    async login(abortController?: AbortController, qrcodeCallback = (uri:string,status:number) => {
         console.log("qrcode",uri)
     }) {
+        const checkCanceled = () => { if (abortController?.signal.aborted) throw new Error("用户已取消登录") }
         await this.fetch("https://buff.163.com/account/login")
         if (!this.cookies.getCookie("csrf_token")) throw new Error("csrf_token not found")
         if (!(await (await this.fetch("https://buff.163.com/account/api/qr_code_login_open")).json())?.data["use_qr_code_login"]) throw new Error("qr_code_create failed")
-        const {code,data} = (await (await this.fetch("https://buff.163.com/account/api/qr_code_create",
+        checkCanceled()
+        const { code, data } = (await (await this.fetch("https://buff.163.com/account/api/qr_code_create",
             {
                 body: JSON.stringify({ "code_type": 1, "extra_param": "{}" }),
                 headers: { referer: "https://buff.163.com/account/login" ,"Content-Type": "application/json"},
@@ -43,6 +45,7 @@ export default class BUFF{
         if(code !== "OK") throw new Error("获取二维码失败，你是否已经登录？")
         const {url,code_id} = data
         qrcodeCallback(url, 1)
+        checkCanceled()
         let status = 1
         do {
             await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -63,6 +66,7 @@ export default class BUFF{
                     qrcodeCallback(url, 5)
                     throw new Error("登录失败！")
             }
+            checkCanceled()
         } while (status <= 2)
         (await this.fetch("https://buff.163.com/account/api/qr_code_login",
             {
@@ -86,7 +90,7 @@ export default class BUFF{
     async getUserInventory() {
 
     }
-    static getBuffImg(url: string) {
+    getBuffImg(url: string) {
         return new buffImg(url)
     }
 }

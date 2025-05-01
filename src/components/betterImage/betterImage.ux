@@ -1,37 +1,61 @@
 <template>
     <div style="{{style}}">
-        <img src="{{src}}" alt="{{alt}}" onclick="viewBig" if="{{update}}" style="{{style}}"/>
-        <img src="{{src}}" alt="{{alt}}" onclick="viewBig" else style="{{style}}"/>
+        <img src="{{src}}" onclick="viewBig" if="{{!loading}}" style="{{style}}"/>
+        <image src="{{loading_src.value}}" class="loading" else/>
     </div>
 </template>
 
 <script>
 import { getImage } from "@utils/imgCache"
 import router from "@system.router"
+
+let ani, loading = true
+let startAni, stopAni
 export default {
-    props: ["url", "alt", "style"],
-    private: {
+    props: ["url", "style"],
+    data: {
         src: "",
-        update: false
+        get loading() { return loading },
+        set loading(value) { loading = value; if (value) startAni(); else stopAni() },
+        loading_src: {value:"/common/animations/loading/icons8-loading-28.png"},
+    }, startAni() {
+        const prefix = "/common/animations/loading/icons8-loading-"
+        const suffix = ".png"
+        const images = []
+        for (let i = 1; i <= 28; i++) { images.push(prefix + i + suffix) }
+        let index = 0
+        clearInterval(ani)
+        ani=setInterval(() => {
+            this.loading_src.value = images[index++]
+            if (index >= images.length) index = 0
+        },33);
+    }, stopAni() {
+        clearInterval(ani)
     },
     onInit() {
+        startAni = this.startAni.bind(this)
+        stopAni = this.stopAni.bind(this)
+        this.startAni()
         if(this.url)this.setUrl()
         this.$watch("url", "setUrl")
     },
     viewBig() {
         router.push({ uri: "pages/bigImg", params: { uri: this.src } })
     },async setUrl() {
-            try {
-                console.log("setUrl", this.url)
+        try {
+            if (!this.url) return;
+            if (this.url.startsWith("http")) {
+                this.loading = true
+                this.src = (await getImage(this.url))
+                this.loading = false
+            } else {
                 this.src = this.url
-                this.update = !this.update
-                console.log("setUrl", this.src)
-                this.alt = this.src = (await getImage(this.url))
-                this.update = !this.update
-                
-            } catch (error) {
-                console.log(error)
+                this.loading = false
             }
+                console.log("setUrl", this.src)
+        } catch (error) {
+            console.log("betterImage",error)
+        }
     }
  }
 </script>
@@ -40,5 +64,15 @@ export default {
 img{
     width: 100%;
     height: 100%;
+}
+.loading{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 90px;
+}
+div{
+    justify-content: center;
+    align-items: center;
 }
 </style>
