@@ -1,6 +1,6 @@
 <template>
     <div style="{{style}}">
-        <img src="{{src}}" onclick="viewBig" if="{{!loading}}" style="{{style}}"/>
+        <img src="{{src}}" onclick="viewBig" if="{{!loading}}" style="object-fit:{{objectfit}};{{style}}"/>
         <image src="{{loading_src.value}}" class="loading" else/>
     </div>
 </template>
@@ -8,11 +8,12 @@
 <script>
 import { getImage } from "@utils/imgCache"
 import router from "@system.router"
+/* import media from "@system.media" 手环无法双指放大，*/
 
 let ani, loading = true
 let startAni, stopAni
 export default {
-    props: ["url", "style"],
+    props: ["url", "style", "prevent-default" , "objectfit"],
     data: {
         src: "",
         get loading() { return loading },
@@ -26,8 +27,12 @@ export default {
         let index = 0
         clearInterval(ani)
         ani=setInterval(() => {
-            this.loading_src.value = images[index++]
-            if (index >= images.length) index = 0
+            try {
+                this.loading_src.value = images[index++]
+                if (index >= images.length) index = 0
+            } catch (error) {
+                clearInterval(ani)
+            }
         },33);
     }, stopAni() {
         clearInterval(ani)
@@ -35,24 +40,27 @@ export default {
     onInit() {
         startAni = this.startAni.bind(this)
         stopAni = this.stopAni.bind(this)
-        this.startAni()
+        /* this.startAni() */
         if(this.url)this.setUrl()
         this.$watch("url", "setUrl")
     },
     viewBig() {
+        if (this.preventDefault) return
+            /* media.previewImage({ current:this.src }) */
+        console.log("viewBig", this.src)
         router.push({ uri: "pages/bigImg", params: { uri: this.src } })
     },async setUrl() {
         try {
             if (!this.url) return;
             if (this.url.startsWith("http")) {
                 this.loading = true
+                console.log("setUrl", this.url)
                 this.src = (await getImage(this.url))
                 this.loading = false
             } else {
                 this.src = this.url
                 this.loading = false
             }
-                console.log("setUrl", this.src)
         } catch (error) {
             console.log("betterImage",error)
         }

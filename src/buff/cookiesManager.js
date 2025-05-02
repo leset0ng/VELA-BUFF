@@ -3,7 +3,7 @@ import storage from '@system.storage'
 export default class cookies {
     constructor() {
         this.cookies = new Map()
-        this.getCookiesFromStorage()
+        this.ready = this.getCookiesFromStorage()
             .then((cookies) => {
                 this.cookies = cookies
                 console.log(this.toString())

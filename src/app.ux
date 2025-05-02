@@ -1,8 +1,9 @@
 <script>
 import BUFF from "./buff/buff"
 import fetch from "./utils/fetch"
+import fetchBig from "./utils/fetchBig"
 
-const buff = new BUFF(fetch)
+const buff = new BUFF(fetch, fetchBig)
 globalThis.buff = buff
 export default {
   buff

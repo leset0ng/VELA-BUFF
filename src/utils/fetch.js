@@ -22,7 +22,7 @@ export default function (url, options,debug=false) {
     })
 }
 
-class Response {
+export class Response {
     constructor(data, { headers, status }) {
         this.data = data
         this.headers = headers

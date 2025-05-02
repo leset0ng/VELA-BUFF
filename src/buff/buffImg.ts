@@ -5,6 +5,19 @@ export default class buffImg {
         const { baseUrl, fop } = buffImg.splitUrlAndFop(uri);
         this.uri = baseUrl
         this.fops = buffImg.fopPraser(fop)
+        /* //小米不支持800*800以上的图片，所以这里等比例缩小到800
+        if (this.fops.has("h") && this.fops.has("w")) {
+            const w = this.fops.get("w") as number;
+            const h = this.fops.get("h") as number;
+            if (w > 800 || h > 800) {
+                const scale = Math.min(800 / w, 800 / h);
+                this.fops.set("w", Math.floor(w * scale));
+                this.fops.set("h", Math.floor(h * scale));
+                console.log("buffImg", "缩小图片", w, h, scale);
+            }
+        } */
+        this.fops.set("f", "webp")
+
     }
     toString() {
         const str= this.uri + '?fop=' + Array.from(this.fops.entries()).map(([key, value]) => `${key}/${value}`).join('/')
@@ -31,7 +44,7 @@ export default class buffImg {
     }
     static fopPraser(fop:string) {
         if (!fop) return new Map<string,number|string>();
-        const parts = fop.split('/');
+        const parts = fop.split('|');
         
         const result=new Map<string,number|string>()
 
@@ -39,7 +52,7 @@ export default class buffImg {
             const key = parts[i];
             const value = parts[i + 1];
             if (key && value !== undefined) {
-                result[key] = value;
+                result.set(key, isNaN(Number(value)) ? value : Number(value))
             }
         }
 

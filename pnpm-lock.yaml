@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@aiot-toolkit/jsc':
+        specifier: ^1.0.7
+        version: 1.0.7
     devDependencies:
       '@commitlint/cli':
         specifier: ^17.3.0
@@ -89,6 +93,10 @@ packages:
 
   '@aiot-toolkit/generator@2.0.3':
     resolution: {integrity: sha512-L7Ljhca6OHnNpwkA5Dw2PJo7rEy8XUaWsItR9Ttw2tfIroJC3rGU1rguRg9RghxOHJ4UDKGXU0HKCeAyyGcQQg==}
+
+  '@aiot-toolkit/jsc@1.0.7':
+    resolution: {integrity: sha512-qW/Gy/02L+o3aMpu4KcxCX0RTTnRGYyDq62PrOvx/Siz7iFE2g7HV9Ib7mbp0iGXVqmA3W1cVZX3X9SgrQjqkQ==}
+    engines: {node: '>=14.0.0'}
 
   '@aiot-toolkit/parser@2.0.3':
     resolution: {integrity: sha512-jftZSURDL6kWUW2M4LEWtkZwyjUBnrAHKu+sIwhlvsyZSZGEr1rpBh3Xwnd5XSQvnnpH5l38OD4i+mijH8acjg==}
@@ -4841,6 +4849,8 @@ snapshots:
       ts-morph: 19.0.0
     transitivePeerDependencies:
       - supports-color
+
+  '@aiot-toolkit/jsc@1.0.7': {}
 
   '@aiot-toolkit/parser@2.0.3':
     dependencies:

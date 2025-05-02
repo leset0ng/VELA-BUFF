@@ -1,7 +1,8 @@
 import storage from '@system.storage'
 import runAsyncFunc from "./runAsyncFunc"
 // 调用 getText 获取文本并缓存,如果缓存存在则直接返回缓存的文本
-export default async function cachedText(getText, key ,updateCallback=()=>{}) {
+export default async function cachedText(getText, key, updateCallback = () => { }) {
+    key = "textCache_" + key
     const cache = await runAsyncFunc(storage.get, { key })
     updateCallback(cache)
     try {
@@ -15,4 +16,12 @@ export default async function cachedText(getText, key ,updateCallback=()=>{}) {
         console.error(e)
         return cache
     }
+}
+export async function cacheText(text, key) {
+    key = "textCache_" + key
+    await runAsyncFunc(storage.set, { key, value: text })
+}
+export async function getCacheText(key) {  // 获取缓存的文本,如果不存在则返回空字符串
+    key = "textCache_" + key
+    return await runAsyncFunc(storage.get, { key })
 }

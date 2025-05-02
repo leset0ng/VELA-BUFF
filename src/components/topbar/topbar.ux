@@ -1,7 +1,7 @@
 <template>
   <div class="topbar">
     <img src="./top-background.png" class="img"/>
-    <text class="title" onClick="handleBackPress">< {{title}}</text>
+    <text class="title" onClick="handleBackPress">{{menu?"三":"<"}} {{title}}</text>
     <text class="time">{{time}}</text>
   </div>
 </template>
@@ -9,12 +9,11 @@
 <script>
 import router from "@system.router"
 export default {
-  props: ["title","onBack"],
+  props: ["title","menu","preventDefault"],
   private: {
     time:"09:28"
   },
   onInit() {
-    console.log("topbar onInit")
     const updTime = () => {
       const now = new Date();
       this.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -25,15 +24,10 @@ export default {
     return this.handleBackPress();
   },
   handleBackPress() {
-    if (this.onBack) {
-      if (this.onBack()) { return true }
-      router.back();
-    }
-    else {
-      router.back();
-    }
+    this.$emit("back")
+    if(!this["preventDefault"])router.back()
     return true
-   }
+  }
  }
 </script>
 

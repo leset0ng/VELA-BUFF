@@ -3,7 +3,7 @@
 <template>
   <div class="page">
     <div class="card" onclick="goLogin">
-      <betterImg url="{{avatar}}" style="height: 50px;width: 50px;border-radius: 100%;"></betterImg>
+      <betterImg url="{{avatar}}" style="height: 50px;width: 50px;border-radius:999px;"></betterImg>
       <text class="nickname">{{logined?nickname:"点击此处登录 >"}}</text>
     </div>
     <div class="card" if="{{logined}}">
@@ -24,9 +24,9 @@
 <script>
 import textCache from "@utils/textCache"
 import router from "@system.router"
+import buffImg2 from "../../buff/buffImg2"
 
 export default {
-  // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
   private: {
     logined: false,
     id: "U7355608",
@@ -38,11 +38,8 @@ export default {
   onShow() {
     textCache(async () => {
       const user = await globalThis.buff.getUserInfo()
-      const avatar = globalThis.buff.getBuffImg(user.avatar)
-      avatar.fops.set("imageView", 2)
-      avatar.fops.set("h", 80)
-      avatar.fops.set("w", 80)
-      user.avatar = avatar.toString()
+      const avatar = buffImg2(user.avatar,80,80)
+      user.avatar = avatar
       return JSON.stringify(user)
     }, "user", (user) => {
       if (!user) return

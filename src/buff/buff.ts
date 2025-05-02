@@ -14,8 +14,12 @@ export default class BUFF{
             AcceptEncoding: "gzip, deflate, br",
         }
     }
+    private user: User | null
+    get loginStatus() { return this.user != null }
+    ready:Promise<void>
     private fetch: (uri: string, options?: RequestInit) => Promise<Response>
-    constructor(fetch: (uri: string, options?: RequestInit)=>Promise<Response>) {
+    private bigFetch: (uri: string, options?: RequestInit) => Promise<Response>
+    constructor(fetch: (uri: string, options?: RequestInit)=>Promise<Response>,bigFetch?: (uri: string, options?: RequestInit)=>Promise<Response>) {
         this.cookies = new Cookies()
         this.fetch = async (uri, options) => {
             const resp=await fetch(uri, {
@@ -26,7 +30,13 @@ export default class BUFF{
             this.cookies.setCookies(resp.headers["set-cookie"])
             return resp
         }
-        this.cookies.setCookie("Locale-Supported","zh-Hans")
+        if(!bigFetch)bigFetch=fetch
+        this.bigFetch = (uri, options) => bigFetch(uri, {
+            ...options,
+            headers: { ...this.headers, ...options?.headers }
+        })
+        this.cookies.setCookie("Locale-Supported", "zh-Hans")
+        this.ready=this.cookies.ready
     }
     async login(abortController?: AbortController, qrcodeCallback = (uri:string,status:number) => {
         console.log("qrcode",uri)
@@ -78,17 +88,25 @@ export default class BUFF{
             }
         )).headers["set-cookie"]
         this.cookies.saveCookies()
+        this.getUserInfo()
         return true
     }
     async logout() {
         this.cookies.clear()
+        this.user = null
         await this.fetch("https://buff.163.com/account/logout")
     }
     async getUserInfo() {
-        return (await(await this.fetch("https://buff.163.com/account/api/user/info/v2")).json()).data.user_info as User
+        return this.user=(await(await this.fetch("https://buff.163.com/account/api/user/info/v2")).json()).data.user_info as User
     }
-    async getUserInventory() {
-
+    async getUserInventory(page: number = 1, search: string = "") {
+        if (!this.user) throw new Error("未登录！")
+        const { code, data } = await (await this.fetch(`https://buff.163.com/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=50&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
+        if (code !== "OK") throw new Error(data)
+        return data
+    }
+    async getPopular() {
+        return (await (await this.fetch("https://buff.163.com/api/index/popular_sell_order")).json()).data
     }
     getBuffImg(url: string) {
         return new buffImg(url)

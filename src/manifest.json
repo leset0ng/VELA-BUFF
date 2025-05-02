@@ -25,15 +25,20 @@
       "name": "system.request"
     },
     {
+      "name": "system.media"
+    },
+    {
       "name": "system.crypto"
+    },{
+      "name": "system.folme"
     }
   ],
   "config": {
     "logLevel": "log",
-    "designWidth": 480
+    "designWidth": 336
   },
   "router": {
-    "entry": "pages/user",
+    "entry": "pages/index",
     "pages": {
       "pages/login": {
         "component": "index"
@@ -42,6 +47,16 @@
         "component": "index"
       },
       "pages/bigImg": {
+        "component": "index"
+      },
+      "pages/index": {
+        "component": "index"
+      },
+      "pages/setting": {
+        "component": "index"
+      },
+      "pages/itemInfo": {
+        "launchMode": "singleTask",
         "component": "index"
       }
     }

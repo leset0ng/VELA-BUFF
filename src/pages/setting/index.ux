@@ -1,0 +1,68 @@
+<import name="topbar" src="@components/topbar/topbar.ux"></import>
+<template>
+  <div class="page">
+    <div class="card" onclick="rmImgCache">
+        <text class="title">清除图片缓存 ></text>
+    </div>
+    <topbar title="设置"></topbar>
+  </div>
+</template>
+
+<script>
+import { clearImageCache } from "@utils/imgCache"
+import prompt from "@system.prompt"
+export default {
+  // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
+  private: {
+  },
+  async rmImgCache() {
+    await clearImageCache()
+    prompt.showToast({ message: "清除成功" })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  padding-top: 60px;
+  position: relative;
+}
+.card{
+  margin: 6px;
+  padding: 10px;
+  background-color: #262626;
+  border-radius: 36px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.title{
+  margin: 10px;
+  font-size: 28px;
+  color: #ffffff;
+}
+.content{
+  margin: 10px;
+  font-size: 24px;
+  color: #ffffff;
+  text-align: left;
+}
+.nickname{
+  margin: 10px;
+  font-size: 28px;
+  color: #ffffff;
+}
+.qrcodeWrapper {
+  width: 80%;
+  height: 80%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+text{
+  font-size: 40px;
+  color: #000000;
+}
+</style>
