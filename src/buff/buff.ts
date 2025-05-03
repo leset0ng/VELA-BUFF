@@ -2,6 +2,7 @@ import Cookies from "./cookiesManager"
 import getDeviceID from "./deviceID"
 import { User } from "./user"
 import buffImg from "./buffImg"
+import { Item } from "./buffgoods"
 export default class BUFF{
     cookies: Cookies
     get headers() { 
@@ -110,5 +111,8 @@ export default class BUFF{
     }
     getBuffImg(url: string) {
         return new buffImg(url)
+    }
+    async getItemDesc(item: Item) {
+        return (await (await this.fetch(`https://buff.163.com/api/market/item_desc_detail?appid=${item.appid}&classid=${item.asset_info.classid}&instanceid=${item.asset_info.instanceid}&assetid=${item.asset_info.assetid}&sell_order_id=${item.id}`)).json()).data
     }
 }

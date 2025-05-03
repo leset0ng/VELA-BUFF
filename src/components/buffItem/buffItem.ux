@@ -1,12 +1,15 @@
 <import name="betterImg" src="@components/betterImage/betterImage.ux"></import>
 <template>
-  <div class="card" style="{{style}}">
+  <div class="card" style="{{style}}" onclick="routeDetail">
     <div class="imageWrapper">
-      <betterImg url="{{img}}" style="width: 100%;height: 100%;border-radius: 10px;background-color: #434343;" objectFit="none"></betterImg>
+      <betterImg url="{{img}}" wapperstyle="width: 304px;height: 100%;border-radius: 10px;background-color: #434343;" imgstyle="object-fit: none;border-radius: 10px;" prevent-default="true"></betterImg>
       <div class="tags">
         <text class="tag {{$item.class}}" for="{{tags}}">
           {{$item.name}}
         </text>
+      </div>
+      <div class="stickers" if="{{stickers.length}}">
+        <betterImg for="{{stickers}}" url="{{$item}}" wapperstyle="width: 40px;height: 30px;" imgstyle="object-fit: cover;" prevent-default="true"></betterImg>
       </div>
       <text class="exterior" if="{{exterior}}">磨损:{{exterior}}</text>
       <div class="progress" if="{{exterior}}">
@@ -16,7 +19,7 @@
         <div class="progress-4"></div>
         <div class="progress-5"></div>
       </div>
-      <div class="progress-inner" if="{{exterior}}" style="left:{{exterior*100}}%"></div>
+      <div class="progress-inner" if="{{exterior}}" style="left:{{exterior*304}}px"></div>
     </div>
     <text class="name">{{name}}</text>
     <text class="price">
@@ -26,6 +29,7 @@
 </template>
 
 <script>
+import router from "@system.router"
 import buffImg2 from "../../buff/buffImg2"
 export default {
     props: ["style","itemdata","goodsdata"],
@@ -35,17 +39,28 @@ export default {
       tags:[],
       exterior: 0,
       price: "",
+      stickers: [],
   },
   onInit() {
     console.log(this.itemdata)
-    this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url), 304, 200)
+    this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url), 304, 304)
     console.log(this.img)
     this.name = this.goodsdata.name
+    this.tags.push({ name:"", class: "rarity_" + (this.goodsdata.tags.rarity.internal_name.split("_")[0] ?? "common")+"_background" })
     this.tags.push({ name: this.goodsdata.tags.exterior.localized_name, class: "color-" + (this.goodsdata.tags.exterior.id - 509) })//崭新是510
     if(this.goodsdata.tags.quality.id != 516)this.tags.push({ name: this.goodsdata.tags.quality.localized_name, class: "quality" })
     this.tags.push({ name: this.itemdata?.asset_info?.info?.paintseed, })
     this.exterior = this.itemdata?.asset_info?.paintwear
-    this.price = this.itemdata?.price??this.goodsdata.sell_min_price
+    this.price = this.itemdata?.price ?? this.goodsdata.sell_min_price
+    this.stickers = this.itemdata?.asset_info?.info?.stickers?.map((item) => {
+      return buffImg2(item.img_url, 40, 40)
+    })
+    console.log(this.stickers)
+  },
+  routeDetail() {
+    globalThis.itemToshow = this.itemdata
+    globalThis.goodsToshow = this.goodsdata
+    router.push({ uri: "pages/itemInfo" })
   }
 
 }
@@ -59,7 +74,14 @@ export default {
     background-color: #262626;
     border-radius: 20px;
 }
-
+.stickers{
+  position: absolute;
+  bottom: 26px;
+  width: 100%;
+  height: 30px;
+  flex-direction: row;
+  justify-content: flex-end;
+}
 .price{
   font-size: 25px;
   color: #FFC641;
@@ -146,4 +168,23 @@ export default {
   color: #8650AC;
   background-color: #14181F;
 }
+.rarity_common_background{
+    background-color: #b0c3d9
+}
+.rarity_rare_background{
+    background-color: #4b69ff
+}
+.rarity_legendary_background{
+    background-color: #d32ce6
+}
+.rarity_mythical_background{
+    background-color: #8847ff
+}
+.rarity_ancient_background{
+    background-color: #eb4b4b
+}
+.rarity_contraband_background{
+    background-color: #e4ae39
+}
+
 </style>

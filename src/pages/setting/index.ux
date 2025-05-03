@@ -1,9 +1,11 @@
 <import name="topbar" src="@components/topbar/topbar.ux"></import>
+<import name="swich" src="@components/settings/swich.ux"></import>
 <template>
   <div class="page">
     <div class="card" onclick="rmImgCache">
-        <text class="title">清除图片缓存 ></text>
+      <text class="title">清除图片缓存 ></text>
     </div>
+    <swich title="缓存高清图片" describe="开启后对性能可能有影响" setting-key="cacheHighQualityImage" defaultvalue="{{false}}"></swich>
     <topbar title="设置"></topbar>
   </div>
 </template>
@@ -14,6 +16,8 @@ import prompt from "@system.prompt"
 export default {
   // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
   private: {
+  },
+  onInit() {
   },
   async rmImgCache() {
     await clearImageCache()
@@ -28,41 +32,29 @@ export default {
   padding-top: 60px;
   position: relative;
 }
-.card{
-  margin: 6px;
-  padding: 10px;
-  background-color: #262626;
-  border-radius: 36px;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-.title{
+.title {
   margin: 10px;
-  font-size: 28px;
+  font-size: 32px;
   color: #ffffff;
 }
-.content{
+.discribe {
   margin: 10px;
+  margin-top: 0px;
   font-size: 24px;
-  color: #ffffff;
-  text-align: left;
+  color: rgba(255, 255, 255, 0.6)
 }
-.nickname{
-  margin: 10px;
-  font-size: 28px;
-  color: #ffffff;
-}
-.qrcodeWrapper {
-  width: 80%;
-  height: 80%;
-  background-color: #ffffff;
-  border-radius: 10px;
-  justify-content: center;
+
+.card {
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  padding: 20px;
-}
-text{
-  font-size: 40px;
-  color: #000000;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  background-color: #262626;
+  padding: 10px;
+  border-radius: 20px;
+  min-height: 112px;
+  margin-top: 6px;
 }
 </style>

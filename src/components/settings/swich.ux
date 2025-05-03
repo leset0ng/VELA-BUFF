@@ -1,0 +1,100 @@
+<template>
+  <div class="card">
+    <div class="content">
+        <text class="title">{{title}}</text>
+        <text class="discribe" if="{{describe}}">{{describe}}</text>
+    </div>
+    <div class="swich swich_{{value}}" onclick="changeValue">
+        <div class="swich_dot_{{value}}" id="dot"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+    props: ["title", "describe", "defaultvalue", "settingKey"],
+    data:{
+        value:false
+    },
+    onInit() {
+        const defaultvalue = this.defaultvalue ?? false
+        this.value = (globalThis.settingsManager.get(this.settingKey) ?? defaultvalue)
+    }, changeValue() {
+        this.value = !this.value
+        globalThis.settingsManager.set(this.settingKey, this.value)
+    }
+ }
+</script>
+
+<style>
+.title {
+  margin: 10px;
+  font-size: 32px;
+  color: #ffffff;
+}
+.discribe {
+  margin: 10px;
+  margin-top: 0px;
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.6)
+}
+
+.card{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    background-color: #262626;
+    padding: 10px;
+    border-radius: 20px;
+    min-height: 112px;
+    margin-top: 6px;
+}
+.content{
+    flex-direction:column;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
+}
+.swich{
+    position: relative;
+    min-width: 64px;
+    margin-left: 10px;
+    width: 64px;
+    height: 40px;
+    border-radius: 99px;
+    /* 这个东西会导致神必的渲染问题 */
+    /* transition-property: background-color;
+    transition-duration: 300ms; */
+}
+#dot{
+    position: absolute;
+    top:8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 99px;
+    /* transition-property: background-color;
+    transition-duration: 300ms; */
+}
+.swich_true{
+    background-color: #0D84FF;
+}
+.swich_false{
+    background-color: #363636
+}
+.swich_dot_true{
+    background-color: white;
+    left: 32px;
+}
+.swich_dot_false{
+    /*64-24-8=32px*/
+    left: 8px;
+    background-color: #666666;
+}
+/* @keyframes onchange {
+    0% { transform: translateX(0px); }
+    100% { transform: translateX(24px); }
+} */
+</style>

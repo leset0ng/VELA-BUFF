@@ -3,7 +3,7 @@
 <template>
   <div class="page">
     <div class="card" onclick="goLogin">
-      <betterImg url="{{avatar}}" style="height: 50px;width: 50px;border-radius:999px;"></betterImg>
+      <betterImg url="{{avatar}}" wapperstyle="height: 50px;width: 50px;border-radius:999px;"></betterImg>
       <text class="nickname">{{logined?nickname:"点击此处登录 >"}}</text>
     </div>
     <div class="card" if="{{logined}}">

@@ -1,13 +1,15 @@
 <template>
   <div class="topbar">
     <img src="./top-background.png" class="img"/>
-    <text class="title" onClick="handleBackPress">{{menu?"三":"<"}} {{title}}</text>
+    <marquee class="title" onClick="handleBackPress"
+    scrollamount="50" text-offset="100">{{menu?"三":"<"}} {{title}}</marquee>
     <text class="time">{{time}}</text>
   </div>
 </template>
 
 <script>
 import router from "@system.router"
+let timer
 export default {
   props: ["title","menu","preventDefault"],
   private: {
@@ -19,7 +21,7 @@ export default {
       this.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
     updTime();
-    setInterval(updTime, 1000);
+    timer = setInterval(updTime, 1000);
   }, onBackPress() {
     return this.handleBackPress();
   },
@@ -27,6 +29,8 @@ export default {
     this.$emit("back")
     if(!this["preventDefault"])router.back()
     return true
+  }, onDestroy() {
+    clearInterval(timer)
   }
  }
 </script>
@@ -56,8 +60,8 @@ export default {
 }
 .title{
   text-align: left;
-  width: 80%;
-  left: 16px;
+  width: 70%;
+  padding-left: 16px;
   text-align: left;
 }
 .time{

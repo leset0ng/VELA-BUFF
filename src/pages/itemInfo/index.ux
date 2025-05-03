@@ -1,38 +1,149 @@
 <import name="topbar" src="@components/topbar/topbar.ux"></import>
 <import name="betterImg" src="@components/betterImage/betterImage.ux"></import>
 <template>
-    <div class="page">
-        <scroll scroll-y="true" class="content" onScroll="scroll">
-            <div class="imageWrapper">
-               <betterImg src="{{item.img}}" class="image"></betterImg>
-            </div>
-        </scroll>
-        <topbar title="{{title}}"></topbar>
-    </div>
+  <div class="page">
+    <scroll scroll-y="true" class="content">
+      <betterImg url="{{img}}"
+        wapperStyle="border-radius: 20px;background-color: #434343;width: 336px;height: 342px;justify-content: flex-start;"
+        imgstyle="object-fit: cover;width: 336px;top:-14px;border-radius: 20px"></betterImg>
+      <text class="name">{{ name }}</text>
+      <text class="updateTime" if="{{updateTime}}">检视图游戏版本:{{ updateTime }}</text>
+      <text class="price">¥{{ price }}</text>
+      <text class="nameTag" if="{{nameTag}}">{{nameTag}}</text>
+      <text class="itemInfo" if="{{paintindex||paintseed}}">
+        图案模板:{{ paintindex }} 皮肤编号:{{ paintseed }}
+      </text>
+      <div class="card" if="{{exterior}}">
+        <div class="progress" if="{{exterior}}">
+          <div class="progress-1"></div>
+          <div class="progress-2"></div>
+          <div class="progress-3"></div>
+          <div class="progress-4"></div>
+          <div class="progress-5"></div>
+          <div class="progress-inner" style="left: {{exterior*316}}px"></div>
+        </div>
+        <text class="exterior" if="{{exterior}}">磨损:{{ exterior }}</text>
+      </div>
+      <text class="desc" if="{{tags}}">
+        <span for="{{tags}}" class="tag {{ $item.class }}">{{ $item.name+" "}}</span>
+      </text>
+      <text class="desc" if="{{desc}}">
+        <span for="{{desc}}" style="color:{{$item.color}};{{$item.style}}">{{ $item.value }}</span>
+      </text>
+    </scroll>
+    <topbar title="{{title}}"></topbar>
+  </div>
 </template>
 
 <script>
-import router from "@system.router"
-import folme from "@system.folme"
-import {parseData} from "@utils/buffData"
-import prompt from "@system.prompt"
-
-let lazyTimeout = null
+import buffImg2 from "../../buff/buffImg2"
 export default {
   private: {
     title: "物品详情",
-    
+    img: "",
+    item: {},
+    goodsInfo: {},
+    exterior: 0,
+    price: 0,
+    name: "",
+    paintseed: "",
+    paintindex: "",
+    updateTime: "",
+    desc: [],
+    nameTag: "",
+    tags: [],
   },
-    async onInit() {
-        await globalThis.buff.ready
-       this.update()
-  },
+  onInit() {
+    this.item = globalThis.itemToshow
+    this.goodsInfo = globalThis.goodsToshow
+    this.title = this.goodsInfo.short_name
+    this.name = this.goodsInfo.name
+    const imgSize=globalThis.settingsManager.get("cacheHighQualityImage")?[850,850]:[336,850]
+    this.img = buffImg2(
+      this.item?.asset_info?.info?.inspect_url ?? this.goodsInfo.icon_url,
+      imgSize[0],imgSize[1]
+    )
+    this.exterior = this.item?.asset_info?.paintwear
+    if (this.item)
+      (async () => {
+        const desc = await globalThis.buff.getItemDesc(this.item)
+        this.updateTime = desc?.steam_asset_info?.game_release_date
+        this.desc = descPraser(desc?.descriptions)
+        this.nameTag = desc?.fraudwarnings
+      })()
+    this.price = this.item?.price ?? this.goodsinfo.sell_min_price
+    this.paintseed = this.item?.asset_info?.info?.paintseed
+    this.paintindex = this.item?.asset_info?.info?.paintindex
+    this.tags.push({ name: this.goodsInfo?.tags?.type?.localized_name })
+    this.tags.push({ name: this.goodsInfo?.tags?.rarity?.localized_name, class: `rarity_${this.goodsInfo?.tags?.rarity?.internal_name?.split("_")[0]}` })
+    this.tags.push({ name: this.goodsInfo?.tags?.quality?.localized_name })
+    this.tags.push({ name: this.goodsInfo?.tags?.exterior?.localized_name, class: `color_${this.goodsInfo?.tags?.exterior?.id - 509}` })
+    console.log(this.tags)
+  }
+}
+function descPraser(desc) {
+  const result = []
+  desc?.reverse()
+  desc?.forEach((item) => {
+    if (item.name === "sticker_info"||item.name === "keychain_info") return
+    if (item.name === "blank") return result.length > 0 && result.push({value: "\n\n"})
+    //解析<i></i>标签
+    const color = "#" + (item.color ?? "c2c2c2")
+    item.value+="\n"
+    if (item.value.includes("<i>")) {
+      const m = item.value.matchAll(/<i>(.*?)<\/i>/g)
+      for (const i of [...m].reverse()) {
+        const values = item.value.replace(i[0], "__match__").split("__match__")
+        item.value = values[1]
+        result.push({value: i[1], color, style: "font-style: italic;"}, {value: values[0], color})
+      }
+      result.push({value: item.value, color})
+    } else {
+      result.push({value: item.value, color})
+    }
+  })
+  result.reverse()
+  return result
 }
 </script>
 
 <style>
-text {
+@import url("../../buff/colors.css");
+.progress-1 .progress-2 .progress-3 .progress-4 .progress-5 .progress {
+  height: 8px;
+}
+.progress {
+  width: 100%;
+  position: relative;
+  border-radius: 20px;
+  background-color: #262626;
+}
+.exterior {
+  font-size: 20px;
+  padding: 0px;
+  background-color: transparent;
+}
+.desc {
+  font-size: 20px;
+}
+.progress-inner {
+  height: 20px;
+  top: 0px;
+  color: #ffffff80;
+  width: 4px;
+}
+.imageWrapper {
+  width: 336px;
+  height: 342px;
+}
+text .card {
   font-size: 40px;
+  width: 336px;
+  background-color: #262626;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 20px;
+  flex-direction: column;
 }
 .page {
   position: absolute;
@@ -42,11 +153,16 @@ text {
   align-items: center;
 }
 .content {
+  padding: 10px;
   padding-top: 60px;
   width: 100%;
   height: 100%;
   flex-direction: column;
   align-items: center;
+}
+.itemInfo {
+  color: #ffffff;
+  font-size: 20px;
 }
 .menu {
   position: absolute;
@@ -73,5 +189,60 @@ text {
   border-radius: 24px;
   justify-content: space-between;
   align-items: center;
+}
+.updateTime {
+  font-size: 20px;
+  color: #888888;
+}
+.name {
+  font-size: 30px;
+  color: #ffffff;
+}
+.price {
+  font-size: 25px;
+  color: #ffc641;
+}
+.nameTag{
+  font-size: 20px;
+  color: #ffc641;
+}
+
+.rarity_common{
+    color: #b0c3d9
+}
+
+.rarity_rare{
+    color: #4b69ff
+}
+
+.rarity_legendary{
+    color: #d32ce6
+}
+
+.rarity_mythical{
+    color: #8847ff
+}
+
+.rarity_ancient{
+    color: #eb4b4b
+}
+
+.rarity_contraband{
+    color: #e4ae39
+}
+.color_1{
+    color: #008000
+}
+.color_2{
+    color: #5cb85c
+}
+.color_3{
+    color: #f0ad4e
+}
+.color_4{
+    color: #d9534f
+}
+.color_5{
+    color: #993a38
 }
 </style>
