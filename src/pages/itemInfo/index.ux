@@ -3,40 +3,45 @@
 <template>
   <div class="page">
     <scroll scroll-y="true" class="content">
+      <!-- 功能没做因为抓包抓不明白 -->
+      <!-- <img src="/common/inspect.png" onclick="inspect" style="position:absolute;top:342px;right:0px" if="{{canInspect}}"/> -->
       <betterImg url="{{img}}"
         wapperStyle="border-radius: 20px;background-color: #434343;width: 336px;height: 342px;justify-content: flex-start;"
         imgstyle="object-fit: cover;width: 336px;top:-14px;border-radius: 20px"></betterImg>
-      <text class="name">{{ name }}</text>
-      <text class="updateTime" if="{{updateTime}}">检视图游戏版本:{{ updateTime }}</text>
-      <text class="price">¥{{ price }}</text>
-      <text class="nameTag" if="{{nameTag}}">{{nameTag}}</text>
-      <text class="itemInfo" if="{{paintindex||paintseed}}">
+      <text static class="name">{{ name }}</text>
+      <text static class="price">¥{{ price }}</text>
+      <text  class="nameTag" if="{{nameTag}}">{{nameTag}}</text>
+      <text static class="itemInfo" if="{{paintindex||paintseed}}">
         图案模板:{{ paintindex }} 皮肤编号:{{ paintseed }}
       </text>
-      <div class="card" if="{{exterior}}">
-        <div class="progress" if="{{exterior}}">
-          <div class="progress-1"></div>
-          <div class="progress-2"></div>
-          <div class="progress-3"></div>
-          <div class="progress-4"></div>
-          <div class="progress-5"></div>
-          <div class="progress-inner" style="left: {{exterior*316}}px"></div>
+      <div static class="card" if="{{exterior}}">
+        <div static class="progress" if="{{exterior}}">
+          <div static class="progress-1"></div>
+          <div static class="progress-2"></div>
+          <div static class="progress-3"></div>
+          <div static class="progress-4"></div>
+          <div static class="progress-5"></div>
+          <div static class="progress-inner" style="left: {{exterior*316}}px"></div>
         </div>
         <text class="exterior" if="{{exterior}}">磨损:{{ exterior }}</text>
       </div>
-      <text class="desc" if="{{tags}}">
-        <span for="{{tags}}" class="tag {{ $item.class }}">{{ $item.name+" "}}</span>
-      </text>
-      <div class="card" if="{{stickers}}">
+      <text class="updateTime" if="{{updateTime}}">检视图游戏版本:{{ updateTime }}</text>
+      <div class="card" if="{{stickers.length}}">
         <text class="title">包含贴纸</text>
         <div class="stickers" for="{{stickers}}">
-          <betterImg url="{{ $item.img }}" wapperStyle="width: 75px;height: 56px;margin-right: 10px;"></betterImg>
+          <betterImg url="{{ $item.img }}" wapperStyle="min-width: 75px;height: 100%;margin-right: 10px;"></betterImg>
           <text class="title">
             <span>{{ $item.name }}</span>
             <span class="stickerWear">{{`\n磨损:${$item.wear}% (${$item.sell_reference_price}¥)`}}</span>
           </text>
         </div>
       </div>
+      <text class="desc" if="{{sellerDesc}}">卖家描述:{{sellerDesc}}</text>
+      <text class="desc" if="{{tags}}">
+        <block for="{{tags}}">
+          <span class="tag {{ $item.class }}" if="{{$item.name!==undefined}}">{{ $item.name+" "}}</span>
+        </block>
+      </text>
       <text class="desc" if="{{desc}}">
         <span for="{{desc}}" style="color:{{$item.color}};{{$item.style}}">{{ $item.value }}</span>
       </text>
@@ -47,6 +52,7 @@
 
 <script>
 import buffImg2 from "../../buff/buffImg2"
+import {cacheText,getCacheText}from "@utils/textCache"
 export default {
   private: {
     title: "物品详情",
@@ -62,13 +68,15 @@ export default {
     desc: [],
     nameTag: "",
     tags: [],
-    stickers: []
+    stickers: [],
+    sellerDesc:""
   },
   onInit() {
     this.item = globalThis.itemToshow
     this.goodsInfo = globalThis.goodsToshow
     this.title = this.goodsInfo.short_name
     this.name = this.goodsInfo.name
+    this.sellerDesc=this.item?.description
     const imgSize=globalThis.settingsManager.get("cacheHighQualityImage")?[850,850]:[336,850]
     this.img = buffImg2(
       this.item?.asset_info?.info?.inspect_url ?? this.goodsInfo.icon_url,
@@ -78,13 +86,23 @@ export default {
 
     if (this.item)
       (async () => {
-        const desc = await globalThis.buff.getItemDesc(this.item)
+        console.log(this.item)
+        let desc
+        try {
+          desc = await globalThis.buff.getItemDesc(this.item)
+          if (globalThis.settingsManager.get("saveCache")) cacheText(JSON.stringify(desc), this.item?.goods_id)
+          console.log(globalThis.settingsManager.get("saveCache"))
+        } catch (error) {
+          console.log(error)
+          desc=JSON.parse(await getCacheText(this.item?.goods_id))
+        }
+        console.log(desc)
         this.updateTime = desc?.steam_asset_info?.game_release_date
         this.desc = descPraser(desc?.descriptions)
         this.nameTag = desc?.fraudwarnings
       })()
 
-    this.price = this.item?.price ?? this.goodsinfo.sell_min_price
+    this.price = this.item?.price ?? this.goodsInfo.sell_min_price
 
     this.paintseed = this.item?.asset_info?.info?.paintseed
     this.paintindex = this.item?.asset_info?.info?.paintindex
@@ -95,9 +113,13 @@ export default {
     this.tags.push({ name: this.goodsInfo?.tags?.exterior?.localized_name, class: `color_${this.goodsInfo?.tags?.exterior?.id - 509}` })
 
     this.stickers = this.item?.asset_info?.info?.stickers.map((item) => {
-      item.wear = (1-item.wear) * 100
-      return { ...item, img: buffImg2(item.img_url, 75, 56) }
+      return { ...item, img: buffImg2(item.img_url, 75, 56),wear:((1-item.wear) * 100).toFixed(2) }
     })
+  }, onDestroy() {
+    global.runGC()
+  },
+  async inspect() {
+    console.log(await globalThis.buff.inspect(this.item))
   }
 }
 function descPraser(desc) {
@@ -108,7 +130,8 @@ function descPraser(desc) {
     if (item.name === "blank") return result.length > 0 && result.push({value: "\n\n"})
     //解析<i></i>标签
     const color = "#" + (item.color ?? "c2c2c2")
-    item.value+="\n"
+    item?.value?.replaceAll("<b>","").replaceAll("</b>","")
+    item.value += "\n"
     if (item.value.includes("<i>")) {
       const m = item.value.matchAll(/<i>(.*?)<\/i>/g)
       for (const i of [...m].reverse()) {

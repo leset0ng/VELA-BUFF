@@ -8,7 +8,6 @@ export default function modifyImageSize(url: string, newWidth: number, newHeight
         const [key, ...value] = pair.split('=');
         params[key] = value.join('=');
     });
-    console.log(params)
     // 提取并处理 fop 参数
     const fop = params.fop;
     if (!fop) return url;
@@ -16,14 +15,12 @@ export default function modifyImageSize(url: string, newWidth: number, newHeight
     // 分割操作步骤并找到最后一个 imageView
     const operations = fop.replaceAll("%7C", "|").split('|');
     let lastImageViewIndex = -1;
-    console.log(operations)
     for (let i = operations.length - 1; i >= 0; i--) {
         if (operations[i].startsWith('imageView/')) {
             lastImageViewIndex = i;
             break;
         }
     }
-    console.log(lastImageViewIndex)
     if (lastImageViewIndex === -1) return url;
 
     // 提取旧参数中的格式和质量

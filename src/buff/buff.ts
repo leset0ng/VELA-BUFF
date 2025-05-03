@@ -1,7 +1,6 @@
 import Cookies from "./cookiesManager"
 import getDeviceID from "./deviceID"
 import { User } from "./user"
-import buffImg from "./buffImg"
 import { Item } from "./buffgoods"
 export default class BUFF{
     cookies: Cookies
@@ -37,7 +36,10 @@ export default class BUFF{
             headers: { ...this.headers, ...options?.headers }
         })
         this.cookies.setCookie("Locale-Supported", "zh-Hans")
-        this.ready=this.cookies.ready
+        this.ready = (async () => {
+            await this.cookies.ready
+            await this.getUserInfo()
+        })()
     }
     async login(abortController?: AbortController, qrcodeCallback = (uri:string,status:number) => {
         console.log("qrcode",uri)
@@ -102,17 +104,23 @@ export default class BUFF{
     }
     async getUserInventory(page: number = 1, search: string = "") {
         if (!this.user) throw new Error("未登录！")
-        const { code, data } = await (await this.fetch(`https://buff.163.com/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=50&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
+        const { code, data } = await (await this.fetch(`https://buff.163.com/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=500&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
         if (code !== "OK") throw new Error(data)
         return data
     }
     async getPopular() {
         return (await (await this.fetch("https://buff.163.com/api/index/popular_sell_order")).json()).data
     }
-    getBuffImg(url: string) {
-        return new buffImg(url)
-    }
     async getItemDesc(item: Item) {
-        return (await (await this.fetch(`https://buff.163.com/api/market/item_desc_detail?appid=${item.appid}&classid=${item.asset_info.classid}&instanceid=${item.asset_info.instanceid}&assetid=${item.asset_info.assetid}&sell_order_id=${item.id}`)).json()).data
+        return (await (await this.fetch(`https://buff.163.com/api/market/item_desc_detail?appid=${item.appid}&classid=${item.asset_info?.classid}&instanceid=${item.asset_info?.instanceid}&assetid=${item.asset_info?.assetid}${item.id?'&sell_order_id='+item.id:""}`)).json()).data
+    }
+    inspect(item: Item) {
+        //TODO: 功能坏的，抓包抓不明白
+        throw new Error("别用")
+        console.log(item.asset_info.assetid)
+        return this.fetch("https://buff.163.com/api/market/csgo_asset/change_state_cs2", {
+            body: JSON.stringify({ assetid: item.asset_info.assetid, contextid: 2 }),
+            method:"POST"
+        })
     }
 }

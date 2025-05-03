@@ -4,26 +4,52 @@
   <div class="page">
     <div class="card" onclick="rmImgCache">
       <text class="title">清除图片缓存 ></text>
+      <text class="discribe">目前缓存大小:{{cachesize}}</text>
     </div>
     <swich title="缓存高清检视图" describe="开启后对性能可能有影响" setting-key="cacheHighQualityImage" defaultvalue="{{false}}"></swich>
+    <swich title="不清除缓存" describe="打开就把整个buff服务器爬下来" setting-key="saveCache" defaultvalue="{{false}}"></swich>
+    <swich title="缓存库存信息" describe="断网的时候看（卡顿++）" setting-key="saveInv" defaultvalue="{{false}}"></swich>
+    <swich title="模拟断网"  setting-key="noInternet" defaultvalue="{{false}}"></swich>
     <topbar title="设置"></topbar>
   </div>
 </template>
 
 <script>
-import { clearImageCache } from "@utils/imgCache"
+import { clearImageCache,getSize } from "@utils/imgCache"
 import prompt from "@system.prompt"
 export default {
   // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
   private: {
+    cachesize:"加载中"
   },
   onInit() {
+    this.getCacheSize()
   },
   async rmImgCache() {
     await clearImageCache()
     prompt.showToast({ message: "清除成功" })
+    this.getCacheSize()
+  }, async getCacheSize(){
+    try {
+      this.cachesize= formatBytes(await getSize())
+    } catch (error) {
+      if(error.code == 301)this.cachesize="0 Bytes"
+    }
   }
 }
+ function formatBytes(bytes, decimals = 2) {
+ if (bytes === 0) return '0 Bytes';
+
+ const k = 1024;
+ const dm = decimals < 0 ? 0 : decimals;
+ const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+ const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+ return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+ }
+
+
 </script>
 
 <style>
@@ -46,9 +72,7 @@ export default {
 
 .card {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   position: relative;
   width: 100%;
   background-color: #262626;

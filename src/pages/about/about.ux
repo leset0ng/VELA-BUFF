@@ -1,0 +1,43 @@
+<import name="topbar" src="@components/topbar/topbar.ux"></import>
+<template>
+  <div class="page">
+    <scroll scroll-y="true" class="content">
+        <img src="/common/aboutbg.png"/>
+        <text style="font-size: 36px;color: rgba(255, 255, 255, 0.6);position: absolute;top:120px;left:26px" onclick="changeVersion">{{version}}</text>
+        <img src="/common/devs.png"/>
+    </scroll>
+    <topbar title="关于"></topbar>
+  </div>
+</template>
+
+<script>
+import { BUILD_TIME } from "@src/buildinfo"
+import app from "@system.app"
+const TIME=BUILD_TIME.split("T")[0]
+export default {
+    private: {
+        version: app.getInfo().versionName
+    }, changeVersion() { 
+        this.version = TIME == this.version ? app.getInfo().versionName : TIME
+    }
+ }
+</script>
+
+<style>
+.page {
+  background-color: black;
+  width: 100%;
+  height: 480px;
+  flex-direction: column;
+  align-items: center;
+}
+.content {
+  padding: 6px;
+  padding-top: 60px;
+  width: 336px;
+  height: 100%;
+  flex-direction: column;
+  align-items:start;
+}
+
+</style>

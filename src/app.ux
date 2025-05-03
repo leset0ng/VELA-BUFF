@@ -3,13 +3,17 @@ import BUFF from "./buff/buff"
 import fetch from "./utils/fetch"
 import fetchBig from "./utils/fetchBig"
 import SettingsManager from "./utils/SettingsManager"
+import {clearImageCache} from "./utils/imgCache"
 
 const buff = new BUFF(fetch, fetchBig)
 globalThis.settingsManager = new SettingsManager()
 globalThis.buff = buff
 export default {
   onDestroy() {
-    settingsManager.save()
+    if (!globalThis.settingsManager.get("saveCache")) {
+      clearImageCache()
+    }
+    globalThis.settingsManager.save()
   }
 }
 </script>

@@ -3,7 +3,7 @@
 <template>
   <div class="page">
     <div class="card" onclick="goLogin">
-      <betterImg url="{{avatar}}" wapperstyle="height: 50px;width: 50px;border-radius:999px;"></betterImg>
+      <betterImg url="{{avatar}}" wapperstyle="height: 50px;width: 50px;border-radius:999px;" imgstyle="height: 50px;width: 50px;border-radius:999px;"></betterImg>
       <text class="nickname">{{logined?nickname:"点击此处登录 >"}}</text>
     </div>
     <div class="card" if="{{logined}}">
@@ -14,7 +14,7 @@
         <text class="title">SteamID</text>
         <text class="content">{{steamid}}</text>
       </div>
-      <div class="card" onclick="logout" if="{{logined}}">
+      <div class="card" onlongpress="logout" onclick="comfirm" if="{{logined}}">
         <text class="title">退出登录 ></text>
       </div>
     <topbar title="用户详情"></topbar>
@@ -25,6 +25,7 @@
 import textCache from "@utils/textCache"
 import router from "@system.router"
 import buffImg2 from "../../buff/buffImg2"
+import prompt from "@system.prompt"
 
 export default {
   private: {
@@ -42,7 +43,7 @@ export default {
       user.avatar = avatar
       return JSON.stringify(user)
     }, "user", (user) => {
-      if (!user) return
+      if (!user||!globalThis.buff.loginStatus) return
       this.logined = true
       user = JSON.parse(user)
       this.id = user.id
@@ -58,6 +59,8 @@ export default {
     globalThis.buff.logout()
     this.logined = false
     this.avatar = "/common/avatar.jpg"
+  }, comfirm() {
+    prompt.showToast({message:"长按登出"})
   }
 }
 </script>

@@ -1,7 +1,8 @@
 import storage from '@system.storage'
 
 export default class SettingsManager {
-    constructor() {
+    constructor(storageKey="__settings__") {
+        this.storageKey = storageKey
         this.settings = new Map()
         this.ready = this.init()
         this.setTimeout = null
@@ -9,8 +10,9 @@ export default class SettingsManager {
     async init() {
         this.settings = await new Promise((resolve, reject) => {
             storage.get({
-                key: "settings",
+                key: this.storageKey,
                 success: (res) => {
+                    console.log(res)
                     if (!res) return resolve(new Map())
                     const settings = new Map(JSON.parse(res))
                     resolve(settings)
@@ -31,6 +33,6 @@ export default class SettingsManager {
         this.setTimeout = setTimeout(() => this.save(), 100)
     }
     save() {
-        storage.set({ key: "settings", value: JSON.stringify({...this.settings}) })
+        storage.set({ key: this.storageKey, value: JSON.stringify([...this.settings]) })
     }
 }

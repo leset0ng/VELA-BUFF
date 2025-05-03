@@ -35,7 +35,7 @@
   ],
   "config": {
     "logLevel": "log",
-    "designWidth": 336
+    "designWidth": 480
   },
   "router": {
     "entry": "pages/index",
@@ -58,6 +58,12 @@
       "pages/itemInfo": {
         "launchMode": "singleTask",
         "component": "index"
+      },
+      "pages/inventory": {
+        "component": "index"
+      },
+      "pages/about": {
+        "component": "about"
       }
     }
   }

@@ -12,7 +12,7 @@ import router from "@system.router"
 let timer
 export default {
   props: ["title","menu","preventDefault"],
-  private: {
+  data: {
     time:"09:28"
   },
   onInit() {
@@ -21,7 +21,7 @@ export default {
       this.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
     updTime();
-    timer = setInterval(updTime, 1000);
+    timer = setInterval(()=>updTime(), 1000);
   }, onBackPress() {
     return this.handleBackPress();
   },

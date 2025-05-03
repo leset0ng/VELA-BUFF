@@ -1,3 +1,4 @@
+import XiaomiError from "./XioamiError"
 /**
  * 将小米的傻逼callback转成promise
  * @param {Function} func 原来的函数
@@ -12,11 +13,4 @@ export default function runAsyncFunc(func, params) {
         fail: (data, code) => reject(new XiaomiError(data, code)),
         ...params
     }))
-}
-class XiaomiError extends Error {
-    constructor(data, code) {
-        super(`${code}:${data}`)
-        this.data = data
-        this.code = code
-    }
 }

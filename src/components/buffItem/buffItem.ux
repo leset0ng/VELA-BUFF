@@ -1,28 +1,30 @@
 <import name="betterImg" src="@components/betterImage/betterImage.ux"></import>
 <template>
-  <div class="card" style="{{style}}" onclick="routeDetail">
-    <div class="imageWrapper">
+  <div static class="card" style="{{style}}" onclick="routeDetail">
+    <div static class="imageWrapper">
       <betterImg url="{{img}}" wapperstyle="width: 304px;height: 100%;border-radius: 10px;background-color: #434343;" imgstyle="object-fit: none;border-radius: 10px;" prevent-default="true"></betterImg>
-      <div class="tags">
-        <text class="tag {{$item.class}}" for="{{tags}}">
-          {{$item.name}}
-        </text>
+      <div static class="tags">
+        <block static for="{{tags}}">
+          <text static class="tag {{$item.class}}" if="{{$item.name!==undefined}}">
+            {{$item.name}}
+          </text>
+        </block>
       </div>
-      <div class="stickers" if="{{stickers.length}}">
+      <div static class="stickers" if="{{stickers.length}}">
         <betterImg for="{{stickers}}" url="{{$item}}" wapperstyle="width: 40px;height: 30px;" imgstyle="width: 40px;height: 30px;object-fit: contain;" prevent-default="true"></betterImg>
       </div>
-      <text class="exterior" if="{{exterior}}">磨损:{{exterior}}</text>
-      <div class="progress" if="{{exterior}}">
-        <div class="progress-1"></div>
-        <div class="progress-2"></div>
-        <div class="progress-3"></div>
-        <div class="progress-4"></div>
-        <div class="progress-5"></div>
+      <text static class="exterior" if="{{exterior}}">磨损:{{exterior}}</text>
+      <div static class="progress" if="{{exterior}}">
+        <div static class="progress-1"></div>
+        <div static class="progress-2"></div>
+        <div static class="progress-3"></div>
+        <div static class="progress-4"></div>
+        <div static class="progress-5"></div>
       </div>
-      <div class="progress-inner" if="{{exterior}}" style="left:{{exterior*304}}px"></div>
+      <div static class="progress-inner" if="{{exterior}}" style="left:{{exterior*304}}px"></div>
     </div>
-    <text class="name">{{name}}</text>
-    <text class="price">
+    <text static class="name">{{name}}</text>
+    <text static class="price">
        ¥{{price}}
     </text>
   </div>
@@ -42,20 +44,20 @@ export default {
       stickers: [],
   },
   onInit() {
-    console.log(this.itemdata)
     this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url), 304, 304)
-    console.log(this.img)
     this.name = this.goodsdata.name
-    this.tags.push({ name:"", class: "rarity_" + (this.goodsdata.tags.rarity.internal_name.split("_")[0] ?? "common")+"_background" })
-    this.tags.push({ name: this.goodsdata.tags.exterior.localized_name, class: "color-" + (this.goodsdata.tags.exterior.id - 509) })//崭新是510
-    if(this.goodsdata.tags.quality.id != 516)this.tags.push({ name: this.goodsdata.tags.quality.localized_name, class: "quality" })
+
+    this.tags.push({ name:"", class: "rarity_" + (this.goodsdata.tags?.rarity?.internal_name?.split("_")[0] ?? "common")+"_background" })
+    this.tags.push({ name: this.goodsdata?.tags?.exterior?.localized_name, class: "color-" + (this.goodsdata?.tags?.exterior?.id - 509) })//崭新是510
+    if(this.goodsdata.tags?.quality?.id != 516)this.tags.push({ name: this.goodsdata.tags.quality.localized_name, class: "quality" })
     this.tags.push({ name: this.itemdata?.asset_info?.info?.paintseed, })
+  
     this.exterior = this.itemdata?.asset_info?.paintwear
     this.price = this.itemdata?.price ?? this.goodsdata.sell_min_price
     this.stickers = this.itemdata?.asset_info?.info?.stickers?.map((item) => {
       return buffImg2(item.img_url, 75, 56) //详情页不用再次缓存
     })
-    console.log(this.stickers)
+    global.runGC()
   },
   routeDetail() {
     globalThis.itemToshow = this.itemdata
@@ -69,6 +71,7 @@ export default {
 <style>
 .card {
     width: 324px;
+    height: 263px;
     flex-direction: column;
     padding: 10px;
     background-color: #262626;
@@ -90,6 +93,9 @@ export default {
   margin: 10px 0;
   font-size: 20px;
   color: #FFFFFF;
+  lines:1;
+  text-overflow: ellipsis;
+
 }
 
 .imageWrapper {

@@ -1,7 +1,11 @@
 import fetch from "@system.fetch"
+import prompt from "@system.prompt"
+import XiaomiError from "./XioamiError"
+
 export default function (url, options,debug=false) {
     console.log(url, options)
     return new Promise((resolve, reject) => {
+        if(globalThis.settingsManager.get("noInternet"))return reject(new XiaomiError("请在设置里关掉模拟断网",1))
         fetch.fetch({
             url, ...options, header: options.headers,
             data: options.body,
@@ -14,11 +18,11 @@ export default function (url, options,debug=false) {
                 }))
             },
             fail: (data, code) => {
-                reject({ data, code })
-                console.log(`handling fail, code = ${code}`)
-                console.log(data)
+                reject(new XiaomiError(data, code))
+                prompt.showToast({ message: "网络错误"+code })
             },
         })
+        /*  */
     })
 }
 
