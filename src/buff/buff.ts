@@ -104,7 +104,7 @@ export default class BUFF{
     }
     async getUserInventory(page: number = 1, search: string = "") {
         if (!this.user) throw new Error("未登录！")
-        const { code, data } = await (await this.fetch(`https://buff.163.com/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=500&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
+        const { code, data } = await (await this.fetch(`https://buff.163.com/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=10&fold=true&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
         if (code !== "OK") throw new Error(data)
         return data
     }

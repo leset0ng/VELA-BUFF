@@ -27,6 +27,7 @@
     <text static class="price">
        ¥{{price}}
     </text>
+    <text static class="amount" if="{{amount>1}}">{{amount}}</text>
   </div>
 </template>
 
@@ -57,7 +58,8 @@ export default {
     this.stickers = this.itemdata?.asset_info?.info?.stickers?.map((item) => {
       return buffImg2(item.img_url, 75, 56) //详情页不用再次缓存
     })
-    global.runGC()
+
+    this.amount = this.itemdata?.amount
   },
   routeDetail() {
     globalThis.itemToshow = this.itemdata
@@ -117,6 +119,16 @@ export default {
   height: 26px;
   width: 100%;
   opacity: 0.8;
+}
+.amount{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 26px;
+  padding: 3px 5px;
+  font-size: 15px;
+  background-color: #ffffff90;
 }
 .tag{
   height: 26px;

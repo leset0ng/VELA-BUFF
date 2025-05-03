@@ -2,14 +2,19 @@
 <import name="swich" src="@components/settings/swich.ux"></import>
 <template>
   <div class="page">
-    <div class="card" onclick="rmImgCache">
-      <text class="title">清除图片缓存 ></text>
-      <text class="discribe">目前缓存大小:{{cachesize}}</text>
-    </div>
-    <swich title="缓存高清检视图" describe="开启后对性能可能有影响" setting-key="cacheHighQualityImage" defaultvalue="{{false}}"></swich>
-    <swich title="不清除缓存" describe="打开就把整个buff服务器爬下来" setting-key="saveCache" defaultvalue="{{false}}"></swich>
-    <swich title="缓存库存信息" describe="断网的时候看（卡顿++）" setting-key="saveInv" defaultvalue="{{false}}"></swich>
-    <swich title="模拟断网"  setting-key="noInternet" defaultvalue="{{false}}"></swich>
+    <scroll class="content" scroll-y="true">
+      <swich title="缓存高清检视图" describe="开启后对性能可能有影响" setting-key="cacheHighQualityImage" defaultvalue="{{false}}"></swich>
+      <swich title="不清除缓存" describe="打开就把整个buff服务器爬下来" setting-key="saveCache" defaultvalue="{{false}}"></swich>
+      <div class="card" onclick="rmImgCache">
+            <text class="title">清除图片缓存 ></text>
+            <text class="discribe">目前缓存大小:{{cachesize}}</text>
+      </div>
+      <swich title="缓存库存信息" describe="断网的时候看（卡顿++）" setting-key="saveInv" defaultvalue="{{false}}"></swich>
+      <div class="card" onclick="rmInvCache">
+            <text class="title">清除库存缓存 ></text>
+          </div>
+      <swich title="模拟断网" describe="开发者用" setting-key="noInternet" defaultvalue="{{false}}"></swich>
+    </scroll>
     <topbar title="设置"></topbar>
   </div>
 </template>
@@ -17,6 +22,7 @@
 <script>
 import { clearImageCache,getSize } from "@utils/imgCache"
 import prompt from "@system.prompt"
+import {CacheService} from "@utils/cacheservice"
 export default {
   // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
   private: {
@@ -35,6 +41,9 @@ export default {
     } catch (error) {
       if(error.code == 301)this.cachesize="0 Bytes"
     }
+  }, async rmInvCache() {
+    await CacheService.clearAll()
+    prompt.showToast({ message: "清除成功" })
   }
 }
  function formatBytes(bytes, decimals = 2) {
@@ -48,14 +57,11 @@ export default {
 
  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
  }
-
-
 </script>
 
 <style>
 .page {
   flex-direction: column;
-  padding-top: 60px;
   position: relative;
 }
 .title {
@@ -80,5 +86,12 @@ export default {
   border-radius: 20px;
   min-height: 112px;
   margin-top: 6px;
+}
+.content {
+  padding-top: 60px;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
