@@ -5,6 +5,15 @@
         <img src="/common/aboutbg.png"/>
         <text style="font-size: 36px;color: rgba(255, 255, 255, 0.6);position: absolute;top:120px;left:26px" onclick="changeVersion">{{version}}</text>
         <img src="/common/devs.png"/>
+        <text class="card">
+          免责声明{{"\n\n"}}
+          本应用部分功能调用了第三方接口，接口所有权归原权利方所有。{{"\n"}}
+  本应用仅用于个人学习与技术研究，未用于任何商业用途。如接口提供方认为本应用存在侵权问题，请联系我们（wslesetong@gmail.com），我们将及时处理。{{"\n"}}
+  使用本应用即视为用户知晓并接受以下内容：{{"\n"}}
+  接口可能随时变更或失效，功能无法保证持续有效；{{"\n"}}
+  使用过程中的任何风险由用户自行承担，本应用不对此承担责任。{{"\n"}}
+  “BUFF”是网之易信息技术（北京）有限公司的注册商标。本软件与网之易信息技术（北京）有限公司没有任何从属、合作或授权关系。{{"\n"}}
+        </text>
     </scroll>
     <topbar title="关于"></topbar>
   </div>
@@ -39,5 +48,13 @@ export default {
   flex-direction: column;
   align-items:start;
 }
-
+.card {
+  font-size: 20px;
+  width: 336px;
+  background-color: #262626;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 20px;
+  flex-direction: column;
+}
 </style>
