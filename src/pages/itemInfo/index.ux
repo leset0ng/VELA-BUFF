@@ -27,6 +27,16 @@
       <text class="desc" if="{{tags}}">
         <span for="{{tags}}" class="tag {{ $item.class }}">{{ $item.name+" "}}</span>
       </text>
+      <div class="card" if="{{stickers}}">
+        <text class="title">包含贴纸</text>
+        <div class="stickers" for="{{stickers}}">
+          <betterImg url="{{ $item.img }}" wapperStyle="width: 75px;height: 56px;margin-right: 10px;"></betterImg>
+          <text class="title">
+            <span>{{ $item.name }}</span>
+            <span class="stickerWear">{{`\n磨损:${$item.wear}% (${$item.sell_reference_price}¥)`}}</span>
+          </text>
+        </div>
+      </div>
       <text class="desc" if="{{desc}}">
         <span for="{{desc}}" style="color:{{$item.color}};{{$item.style}}">{{ $item.value }}</span>
       </text>
@@ -52,6 +62,7 @@ export default {
     desc: [],
     nameTag: "",
     tags: [],
+    stickers: []
   },
   onInit() {
     this.item = globalThis.itemToshow
@@ -64,6 +75,7 @@ export default {
       imgSize[0],imgSize[1]
     )
     this.exterior = this.item?.asset_info?.paintwear
+
     if (this.item)
       (async () => {
         const desc = await globalThis.buff.getItemDesc(this.item)
@@ -71,14 +83,21 @@ export default {
         this.desc = descPraser(desc?.descriptions)
         this.nameTag = desc?.fraudwarnings
       })()
+
     this.price = this.item?.price ?? this.goodsinfo.sell_min_price
+
     this.paintseed = this.item?.asset_info?.info?.paintseed
     this.paintindex = this.item?.asset_info?.info?.paintindex
+
     this.tags.push({ name: this.goodsInfo?.tags?.type?.localized_name })
     this.tags.push({ name: this.goodsInfo?.tags?.rarity?.localized_name, class: `rarity_${this.goodsInfo?.tags?.rarity?.internal_name?.split("_")[0]}` })
     this.tags.push({ name: this.goodsInfo?.tags?.quality?.localized_name })
     this.tags.push({ name: this.goodsInfo?.tags?.exterior?.localized_name, class: `color_${this.goodsInfo?.tags?.exterior?.id - 509}` })
-    console.log(this.tags)
+
+    this.stickers = this.item?.asset_info?.info?.stickers.map((item) => {
+      item.wear = (1-item.wear) * 100
+      return { ...item, img: buffImg2(item.img_url, 75, 56) }
+    })
   }
 }
 function descPraser(desc) {
@@ -126,11 +145,35 @@ function descPraser(desc) {
 .desc {
   font-size: 20px;
 }
+.title{
+  font-size: 20px;
+  color: #ffffff;
+  background-color: transparent;
+  padding: 0px;
+  margin: 0px;
+}
 .progress-inner {
   height: 20px;
   top: 0px;
   color: #ffffff80;
   width: 4px;
+}
+.stickers{
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+
+}
+.stickerName {
+  font-size: 20px;
+  color: white;
+}
+.stickerWear{
+  font-size: 20px;
+  color: #9E9E9E;
+  text-align: end;
 }
 .imageWrapper {
   width: 336px;

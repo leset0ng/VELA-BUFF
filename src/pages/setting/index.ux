@@ -5,7 +5,7 @@
     <div class="card" onclick="rmImgCache">
       <text class="title">清除图片缓存 ></text>
     </div>
-    <swich title="缓存高清图片" describe="开启后对性能可能有影响" setting-key="cacheHighQualityImage" defaultvalue="{{false}}"></swich>
+    <swich title="缓存高清检视图" describe="开启后对性能可能有影响" setting-key="cacheHighQualityImage" defaultvalue="{{false}}"></swich>
     <topbar title="设置"></topbar>
   </div>
 </template>

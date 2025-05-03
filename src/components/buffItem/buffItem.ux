@@ -9,7 +9,7 @@
         </text>
       </div>
       <div class="stickers" if="{{stickers.length}}">
-        <betterImg for="{{stickers}}" url="{{$item}}" wapperstyle="width: 40px;height: 30px;" imgstyle="object-fit: cover;" prevent-default="true"></betterImg>
+        <betterImg for="{{stickers}}" url="{{$item}}" wapperstyle="width: 40px;height: 30px;" imgstyle="width: 40px;height: 30px;object-fit: contain;" prevent-default="true"></betterImg>
       </div>
       <text class="exterior" if="{{exterior}}">磨损:{{exterior}}</text>
       <div class="progress" if="{{exterior}}">
@@ -53,7 +53,7 @@ export default {
     this.exterior = this.itemdata?.asset_info?.paintwear
     this.price = this.itemdata?.price ?? this.goodsdata.sell_min_price
     this.stickers = this.itemdata?.asset_info?.info?.stickers?.map((item) => {
-      return buffImg2(item.img_url, 40, 40)
+      return buffImg2(item.img_url, 75, 56) //详情页不用再次缓存
     })
     console.log(this.stickers)
   },
