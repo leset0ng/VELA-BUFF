@@ -1,4 +1,4 @@
-import XiaomiError from "./XioamiError"
+import XiaomiError from "./XiaomiError"
 /**
  * 将小米的傻逼callback转成promise
  * @param {Function} func 原来的函数

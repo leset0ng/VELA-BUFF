@@ -1,6 +1,6 @@
 import fetch from "@system.fetch"
 import prompt from "@system.prompt"
-import XiaomiError from "./XioamiError"
+import XiaomiError from "./XiaomiError"
 
 export default function (url, options,debug=false) {
     console.log(url, options)

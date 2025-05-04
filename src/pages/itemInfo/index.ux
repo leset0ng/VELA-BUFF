@@ -130,7 +130,7 @@ function descPraser(desc) {
     if (item.name === "blank") return result.length > 0 && result.push({value: "\n\n"})
     //解析<i></i>标签
     const color = "#" + (item.color ?? "c2c2c2")
-    item?.value?.replaceAll("<b>","").replaceAll("</b>","")
+    item.value = item.value.replaceAll("<b>","").replaceAll("</b>",""); // 补充赋值操作
     item.value += "\n"
     if (item.value.includes("<i>")) {
       const m = item.value.matchAll(/<i>(.*?)<\/i>/g)

@@ -2,12 +2,12 @@
 <import name="buffItem" src="@components/buffItem/buffItem.ux"></import>
 <template>
     <div class="page">
-        <scroll scroll-y="true" class="content" onScroll="scroll" if="{{show}}">
-            <div class="placeholder" style="height:{{placeholder}}px"></div>
+        <scroll scroll-y="true" class="content" onScroll="onScroll" if="{{show}}">
             <text onclick="update">推荐</text>
+            <!-- 渲染占位符和可见的 buffItem -->
             <block for="{{items}}">
-                <buffItem itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" if="{{$item.show}}"
-                    style="margin-top: 10px;position:absolute;top:{{$item.displayX}}px"></buffItem>
+                <div if="{{$item.isPlaceholder}}" style="height: 263px; width: 324px; background-color: #262626; border-radius: 20px; margin-bottom: 10px;"></div>
+                <buffItem else itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" style="margin-bottom: 10px" />
             </block>
         </scroll>
         <list show="{{menu_show}}" class="menu" id="menu">
@@ -26,7 +26,6 @@ import folme from "@system.folme"
 import {parseData} from "@utils/buffData"
 import prompt from "@system.prompt"
 
-let lazyTimeout = null
 export default {
   private: {
     menu_show: false,
@@ -35,26 +34,26 @@ export default {
       {name: "用户详情", route: "pages/user", img: "/common/user.png"},
       {name: "库存", route: "pages/inventory", img: "/common/inventory.png"},
       {name: "设置", route: "pages/setting", img: "/common/settings.png"},
-      {name: "关于", route: "pages/about", img: "/common/info.png"}
+      {name: "关于", route: "pages/about", img: "/common/info.png"},
+      {name: "搜索", route: "pages/search", img: "/common/search.png"}
     ],
     items: [],
-    placeholder: 0,
-    show:true
+    show: true,
+    scrollTop: 0,
+    visibleStart: 0,
+    visibleEnd: 0,
+    debounceTimer: null
   },
     async onInit() {
         await globalThis.buff.ready
        this.update()
+       this.calculateVisibleItems()
   },
     async update() {
     prompt.showToast({message: "正在获取数据"})
     try {
         this.items = parseData(await globalThis.buff.getPopular())
-        this.items.forEach((item, index) => {
-          item.displayX=index*273+100
-        })
-        this.placeholder = this.items.length * 273+200
-        this.items[0].show = true
-        this.items[1].show = true
+        this.calculateVisibleItems()
     } catch (error) {
         prompt.showToast({message:error.message})
     }
@@ -82,22 +81,35 @@ export default {
       return true
     }
   },
-  scroll({scrollY}) {
-    //懒加载
-    clearTimeout(lazyTimeout)
-    lazyTimeout = setTimeout(() => {
-      this.items.forEach((item, index) => {
-        if (scrollY + 500 > item.displayX && scrollY-200 < item.displayX) {
-          item.show = true
-        } else {
-          item.show = false
-        }
-      })
-    }, 100)
-  }, onHide() {
+  onScroll(e) {
+    this.scrollTop = e.scrollY
+    // 添加防抖逻辑
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+    }
+    this.debounceTimer = setTimeout(() => {
+      this.calculateVisibleItems();
+    }, 300); // 300 毫秒的防抖时间，可以根据实际情况调整
+  },
+  calculateVisibleItems() {
+    const itemHeight = 273; // 每个 buffItem 的高度，包含 margin-bottom
+    const visibleStart = Math.floor(this.scrollTop / itemHeight);
+    const visibleEnd = Math.ceil((this.scrollTop + 480) / itemHeight); // 假设页面高度为 480
+
+    this.visibleStart = Math.max(0, visibleStart - 1);
+    this.visibleEnd = Math.min(this.items.length, visibleEnd + 1);
+
+    this.items.forEach((item, index) => {
+      item.isPlaceholder = index < this.visibleStart || index >= this.visibleEnd;
+    })
+  },
+  onHide() {
     //节省内存
     this.show=false
-  }, onShow() {
+  },
+  onShow() {
+    this.scrollTop = 0
+    this.calculateVisibleItems()
     this.show=true
   }
 }

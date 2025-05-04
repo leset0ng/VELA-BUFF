@@ -2,11 +2,12 @@
 <import name="buffItem" src="@components/buffItem/buffItem.ux" />
 <template>
   <div class="page">
-    
-    <scroll class="list" scroll-y="true">
+    <scroll class="list" scroll-y="true" onscroll="onScroll">
       <text class="price">{{ price }}</text>
+      <!-- 渲染占位符和可见的 buffItem -->
       <block for="{{items}}">
-        <buffItem itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" style="margin-bottom: 10px" />
+        <div if="{{$item.isPlaceholder}}"  style="height: 263px; width: 324px; background-color: #262626; border-radius: 20px; margin-bottom: 10px;"></div>
+        <buffItem else itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" style="margin-bottom: 10px" />
       </block>
     </scroll>
     <div class="pagination">
@@ -27,11 +28,20 @@ import {cacheText, getCacheText} from "@utils/textCache"
 
 export default {
   protected: {page: 1},
-  private: {items: [], price: "", totalPages: 1},
+  private: {
+    items: [],
+    price: "",
+    totalPages: 1,
+    scrollTop: 0,
+    visibleStart: 0,
+    visibleEnd: 0,
+    debounceTimer: null // 新增防抖计时器
+  },
   async onInit() {
     this.page = Number(this.page) || 1
     this.totalPages = await CacheService.getTotalPages()
     await this.loadPage()
+    this.calculateVisibleItems()
   },
   async loadPage() {
     prompt.showToast({message: "加载中..."})
@@ -46,10 +56,12 @@ export default {
         goods_infos: await CacheService.getAllGoods(),
         fop_str: ""
       })
+      this.calculateVisibleItems()
     } catch (err) {
       prompt.showToast({ message: "加载失败,使用缓存数据" })
       this.items = await CacheService.getPage(this.page)
       this.price = await getCacheText("price")
+      this.calculateVisibleItems()
     }
   },
   prevPage() {
@@ -58,6 +70,28 @@ export default {
   nextPage() {
     if (this.page < this.totalPages)
       router.replace({uri: "/pages/inventory", params: {page: (+this.page) + 1}})
+  },
+  onScroll(e) {
+    this.scrollTop = e.scrollY
+    // 添加防抖逻辑
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+    }
+    this.debounceTimer = setTimeout(() => {
+      this.calculateVisibleItems();
+    }, 300); // 300 毫秒的防抖时间，可以根据实际情况调整
+  },
+  calculateVisibleItems() {
+    const itemHeight = 273; // 每个 buffItem 的高度，包含 margin-bottom
+    const visibleStart = Math.floor(this.scrollTop / itemHeight);
+    const visibleEnd = Math.ceil((this.scrollTop + 480) / itemHeight); // 假设页面高度为 480
+
+    this.visibleStart = Math.max(0, visibleStart - 2); // 预加载前 2 个
+    this.visibleEnd = Math.min(this.items.length, visibleEnd + 2); // 预加载后 2 个
+
+    this.items.forEach((item, index) => {
+      item.isPlaceholder = index < this.visibleStart || index >= this.visibleEnd;
+    })
   }
 }
 </script>
