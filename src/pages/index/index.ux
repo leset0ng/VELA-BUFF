@@ -2,7 +2,7 @@
 <import name="buffItem" src="@components/buffItem/buffItem.ux"></import>
 <template>
     <div class="page">
-        <scroll scroll-y="true" class="content" onScroll="onScroll" if="{{show}}">
+        <scroll scroll-y="true" class="content" style="padding-top:{{topbarHeight}}px;" onScroll="onScroll" if="{{!menu_show}}">
             <text onclick="update">推荐</text>
             <!-- 渲染占位符和可见的 buffItem -->
             <block for="{{items}}">
@@ -10,7 +10,7 @@
                 <buffItem else itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" style="margin-bottom: 10px" />
             </block>
         </scroll>
-        <list show="{{menu_show}}" class="menu" id="menu">
+        <list show="{{menu_show}}" class="menu" id="menu" style="padding-top:{{topbarHeight}}px;">
             <list-item  static class="menu-item" type="menu" for.static="{{pages}}" onClick="route($item.route)">
                 <img  static src="{{$item.img}}" class="menu-icon" />
                 <text  static class="menu-text">{{ $item.name }}</text>
@@ -22,9 +22,11 @@
 
 <script>
 import router from "@system.router"
-import folme from "@system.folme"
+/* import folme from "@system.folme" */
 import {parseData} from "@utils/buffData"
 import prompt from "@system.prompt"
+
+const { topbarHeight } = globalThis
 
 export default {
   private: {
@@ -42,7 +44,8 @@ export default {
     scrollTop: 0,
     visibleStart: 0,
     visibleEnd: 0,
-    debounceTimer: null
+    debounceTimer: null,
+    topbarHeight
   },
     async onInit() {
         await globalThis.buff.ready
@@ -59,18 +62,20 @@ export default {
     }
   },
   menu() {
-    folme.to({
+    /*folme.to({
       id: "menu",
       toState: {translateY: this.menu_show ? -480 : 0},
       config: {duration: 0.3}
     })
     setTimeout(
-      () => {
+      () => {*/
         this.menu_show = !this.menu_show
         this.title = this.menu_show ? "菜单" : "首页"
-      },
+        this.scrollTop = 0
+        this.calculateVisibleItems()
+      /* },
       this.menu_show ? 300 : 0
-    )
+    ) */
   },
   route(route) {
     router.push({uri: route})
@@ -122,6 +127,7 @@ text {
 .page {
   position: absolute;
   background-color: black;
+  flex-direction: column;
   width: 336px;
   height: 480px;
   align-items: center;
@@ -135,13 +141,12 @@ text {
 }
 .menu {
   position: absolute;
-  background-color: black;
-  width: 100%;
+  flex-direction: column;
+  width: 336px;
   height: 100%;
   padding: 10px;
-  padding-top: 60px;
   align-items: center;
-  transform: translateY(-100%);
+  /*transform: translateY(-100%);*/
 }
 .placeholder {
   width: 1px;
@@ -151,7 +156,6 @@ text {
 .menu-item {
   position: relative;
   height: 80px;
-  width: 100%;
   background-color: #262626;
   margin-top: 10px;
   padding: 10px;

@@ -2,7 +2,7 @@
 <import name="buffItem" src="@components/buffItem/buffItem.ux" />
 <template>
   <div class="page">
-    <scroll class="list" scroll-y="true" onscroll="onScroll">
+    <scroll class="list" style="padding-top:{{topbarHeight}};" scroll-y="true" onscroll="onScroll">
       <text class="price">{{ price }}</text>
       <!-- 渲染占位符和可见的 buffItem -->
       <block for="{{items}}">
@@ -26,6 +26,8 @@ import router from "@system.router"
 import { CacheService } from "@utils/cacheservice"
 import {cacheText, getCacheText} from "@utils/textCache"
 
+const { topbarHeight } = globalThis
+
 export default {
   protected: {page: 1},
   private: {
@@ -35,7 +37,8 @@ export default {
     scrollTop: 0,
     visibleStart: 0,
     visibleEnd: 0,
-    debounceTimer: null // 新增防抖计时器
+    debounceTimer: null, // 新增防抖计时器
+    topbarHeight
   },
   async onInit() {
     this.page = Number(this.page) || 1
@@ -53,7 +56,7 @@ export default {
       if(globalThis.settingsManager.get("saveInv"))cacheText(this.price,"price")
       this.items = parseData({
         items: data.items,
-        goods_infos: await CacheService.getAllGoods(),
+        goods_infos: data.goods_infos,
         fop_str: ""
       })
       this.calculateVisibleItems()
@@ -110,8 +113,7 @@ export default {
   flex: 1;
   flex-direction: column;
   padding: 6px;
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-bottom: 160px;
   align-items: center;
 }
 .price {
@@ -127,7 +129,7 @@ export default {
   height: 60px;
   background-color: rgba(0, 0, 0, 0.8);
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   padding: 0 20px;
 }

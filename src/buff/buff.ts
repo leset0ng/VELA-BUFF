@@ -1,10 +1,13 @@
+import { Item } from "./buffgoods"
 import Cookies from "./cookiesManager"
 import getDeviceID from "./deviceID"
 import { User } from "./user"
-import { Item } from "./buffgoods"
+
+const ITEM_PER_PAGE = 10
+
 export default class BUFF{
     cookies: Cookies
-    get headers() { 
+    get headers() {
         return {
             origin: "https://buff.163.com", referer: "https://buff.163.com/", "x-requested-with": "XMLHttpRequest",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.51",
@@ -104,7 +107,7 @@ export default class BUFF{
     }
     async getUserInventory(page: number = 1, search: string = "") {
         if (!this.user) throw new Error("未登录！")
-        const { code, data } = await (await this.fetch(`https://buff.163.com/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=10&fold=true&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
+        const { code, data } = await (await this.fetch(`https://buff.163.com/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=${ITEM_PER_PAGE}&fold=true&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
         if (code !== "OK") throw new Error(data)
         return data
     }

@@ -2,7 +2,7 @@
 <import name="swich" src="@components/settings/swich.ux"></import>
 <template>
   <div class="page">
-    <scroll class="content" scroll-y="true">
+    <scroll class="content" scroll-y="true" style="padding-top:{{topbarHeight}}px;">
       <swich title="缓存高清检视图" describe="开启后对性能可能有影响" setting-key="cacheHighQualityImage" defaultvalue="{{false}}"></swich>
       <swich title="不清除缓存" describe="打开就把整个buff服务器爬下来" setting-key="saveCache" defaultvalue="{{false}}"></swich>
       <div class="card" onclick="rmImgCache">
@@ -22,11 +22,15 @@
 <script>
 import { clearImageCache,getSize } from "@utils/imgCache"
 import prompt from "@system.prompt"
-import {CacheService} from "@utils/cacheservice"
+import { CacheService } from "@utils/cacheservice"
+
+const { topbarHeight } = globalThis
+
 export default {
   // 页面级组件的数据模型，影响传入数据的覆盖机制：private内定义的属性不允许被覆盖
   private: {
-    cachesize:"加载中"
+    cachesize: "加载中",
+    topbarHeight
   },
   onInit() {
     this.getCacheSize()
@@ -88,7 +92,6 @@ export default {
   margin-top: 6px;
 }
 .content {
-  padding-top: 60px;
   width: 100%;
   height: 100%;
   flex-direction: column;

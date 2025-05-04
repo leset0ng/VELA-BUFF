@@ -4,7 +4,7 @@
     <div class="page"  ontouchmove="touchMove" ontouchstart="touchStart">
       <img src="{{uri}}" style="{{style}}" oncomplete="imgLoad"/>
     </div>
-    
+
     <slider max="600" min="20" value="100" onchange="changeSize" ></slider>
     <topbar title="图片详情"></topbar>
   </div>

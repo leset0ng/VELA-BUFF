@@ -45,6 +45,7 @@ export default {
       stickers: [],
   },
   onInit() {
+    console.log(this.itemdata,this.goodsdata)
     this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url), 304, 304)
     this.name = this.goodsdata.name
 
@@ -52,7 +53,7 @@ export default {
     this.tags.push({ name: this.goodsdata?.tags?.exterior?.localized_name, class: "color-" + (this.goodsdata?.tags?.exterior?.id - 509) })//崭新是510
     if(this.goodsdata.tags?.quality?.id != 516)this.tags.push({ name: this.goodsdata.tags.quality.localized_name, class: "quality" })
     this.tags.push({ name: this.itemdata?.asset_info?.info?.paintseed, })
-  
+
     this.exterior = this.itemdata?.asset_info?.paintwear
     this.price = this.itemdata?.price ?? this.goodsdata.sell_min_price
     this.stickers = this.itemdata?.asset_info?.info?.stickers?.map((item) => {

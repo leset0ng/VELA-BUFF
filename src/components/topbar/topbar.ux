@@ -1,19 +1,28 @@
 <template>
-  <div class="topbar">
+  <div class="topbar" style="height: {{height}}px;">
     <img src="./top-background.png" class="img"/>
-    <marquee class="title" onClick="handleBackPress"
+    <marquee class="{{screenType=='rect'}}_title" onClick="handleBackPress"
     scrollamount="50" text-offset="100">{{menu?"三":"<"}} {{title}}</marquee>
-    <text class="time">{{time}}</text>
+    <text class="time"  if="{{screenType=='rect'}}">{{time}}</text>
+    <text class="circle"  else>{{time}}</text>
+    <!-- <div class="circle_time" else>
+      <text class="circle_0">{{time[0]}}</text>
+      <text class="circle_1">{{time[1]}}</text>
+      <text class="circle_2">{{time[2]}}</text>
+      <text class="circle_3">{{time[3]}}</text>
+      <text class="circle_4">{{time[4]}}</text>
+    </div> -->
   </div>
 </template>
 
 <script>
 import router from "@system.router"
 let timer
+const {screenType,topbarHeight} = globalThis
 export default {
   props: ["title","menu","preventDefault"],
   data: {
-    time:"09:28"
+    time:"09:28",screenType,height:topbarHeight
   },
   onInit() {
     const updTime = () => {
@@ -37,11 +46,11 @@ export default {
 
 <style>
 .topbar {
-    height: 58px;
     width: 100%;
     position: absolute;
     top: 0px;
     padding-top: 16px;
+    justify-content: center;
 }
 .img{
    width: 100%;
@@ -49,23 +58,63 @@ export default {
    position: absolute;
    top: 0px;
 }
-.title .time{
-   font-size: 32px;
-   bottom: 2px;
-   position: absolute;
-   color: #fff;
-   font-weight: bold;
-   lines:1;
-   top: 16px;
+text marquee{
+  font-size: 30px;
+  color: #fff;
+  font-weight: bold;
+  lines:1;
+
 }
-.title{
+.true_title .false_title .time{
+   bottom: 5px;
+   position: absolute;
+   lines:1;
+}
+.false_title{
+  text-align: center;
+  width: 70%;
+}
+.true_title{
   text-align: left;
   width: 70%;
-  padding-left: 16px;
+  left: 16px;
   text-align: left;
 }
 .time{
   right: 16px;
   text-align: right;
+}
+.circle_time .circle{
+  position: absolute;
+  width: 100%;
+  justify-items: center;
+  text-align: center;
+  top:2px;
+  width: 100px;
+}
+.circle_0 .circle_1 .circle_2 .circle_3 .circle_4 .circle{
+  font-size: 25px;
+  color: #fff;
+  font-weight: bold;
+  /* position: relative; */
+  margin: 2px;
+}
+.circle_0{
+  top:3px;
+  transform: rotate(-12deg);
+}
+.circle_1{
+  transform: rotate(-3deg);
+}
+.circle_2{
+  top: -3px;
+  transform: rotate(0deg);
+}
+.circle_3{
+  transform: rotate(3deg);
+}
+.circle_4{
+  top:3px;
+  transform: rotate(12deg);
 }
 </style>
