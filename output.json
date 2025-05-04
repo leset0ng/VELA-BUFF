@@ -1,0 +1,578 @@
+[
+  {
+    "value": "knife",
+    "text": "匕首",
+    "subType": [
+      {
+        "value": "weapon_knife_butterfly",
+        "text": "蝴蝶刀"
+      },
+      {
+        "value": "weapon_knife_m9_bayonet",
+        "text": "M9 刺刀"
+      },
+      {
+        "value": "weapon_knife_karambit",
+        "text": "爪子刀"
+      },
+      {
+        "value": "weapon_knife_kke",
+        "text": "廓尔喀刀"
+      },
+      {
+        "value": "weapon_knife_skeleton",
+        "text": "骷髅匕首"
+      },
+      {
+        "value": "weapon_bayonet",
+        "text": "刺刀"
+      },
+      {
+        "value": "weapon_knife_widowmaker",
+        "text": "锯齿爪刀"
+      },
+      {
+        "value": "weapon_knife_outdoor",
+        "text": "流浪者匕首"
+      },
+      {
+        "value": "weapon_knife_flip",
+        "text": "折叠刀"
+      },
+      {
+        "value": "weapon_knife_stiletto",
+        "text": "短剑"
+      },
+      {
+        "value": "weapon_knife_css",
+        "text": "海豹短刀"
+      },
+      {
+        "value": "weapon_knife_ursus",
+        "text": "熊刀"
+      },
+      {
+        "value": "weapon_knife_tactical",
+        "text": "猎杀者匕首"
+      },
+      {
+        "value": "weapon_knife_cord",
+        "text": "系绳匕首"
+      },
+      {
+        "value": "weapon_knife_canis",
+        "text": "求生匕首"
+      },
+      {
+        "value": "weapon_knife_falchion",
+        "text": "弯刀"
+      },
+      {
+        "value": "weapon_knife_push",
+        "text": "暗影双匕"
+      },
+      {
+        "value": "weapon_knife_survival_bowie",
+        "text": "鲍伊猎刀"
+      },
+      {
+        "value": "weapon_knife_gut",
+        "text": "穿肠刀"
+      },
+      {
+        "value": "weapon_knife_gypsy_jackknife",
+        "text": "折刀"
+      }
+    ]
+  },
+  {
+    "value": "hands",
+    "text": "手套",
+    "subType": [
+      {
+        "value": "weapon_sport_gloves",
+        "text": "运动手套"
+      },
+      {
+        "value": "weapon_specialist_gloves",
+        "text": "专业手套"
+      },
+      {
+        "value": "weapon_moto_gloves",
+        "text": "摩托手套"
+      },
+      {
+        "value": "weapon_driver_gloves",
+        "text": "驾驶手套"
+      },
+      {
+        "value": "weapon_hand_wraps",
+        "text": "手部束带"
+      },
+      {
+        "value": "weapon_brokenfang_gloves",
+        "text": "狂牙手套"
+      },
+      {
+        "value": "weapon_hydra_gloves",
+        "text": "九头蛇手套"
+      },
+      {
+        "value": "weapon_bloodhound_gloves",
+        "text": "血猎手套"
+      }
+    ]
+  },
+  {
+    "value": "rifle",
+    "text": "步枪",
+    "subType": [
+      {
+        "value": "weapon_ak47",
+        "text": "AK-47"
+      },
+      {
+        "value": "weapon_awp",
+        "text": "AWP"
+      },
+      {
+        "value": "weapon_m4a1_silencer",
+        "text": "M4A1 消音版"
+      },
+      {
+        "value": "weapon_m4a1",
+        "text": "M4A4"
+      },
+      {
+        "value": "weapon_aug",
+        "text": "AUG"
+      },
+      {
+        "value": "weapon_sg556",
+        "text": "SG 553"
+      },
+      {
+        "value": "weapon_famas",
+        "text": "法玛斯"
+      },
+      {
+        "value": "weapon_galilar",
+        "text": "加利尔 AR"
+      },
+      {
+        "value": "weapon_ssg08",
+        "text": "SSG 08"
+      },
+      {
+        "value": "weapon_scar20",
+        "text": "SCAR-20"
+      },
+      {
+        "value": "weapon_g3sg1",
+        "text": "G3SG1"
+      }
+    ]
+  },
+  {
+    "value": "pistol",
+    "text": "手枪",
+    "subType": [
+      {
+        "value": "weapon_deagle",
+        "text": "沙漠之鹰"
+      },
+      {
+        "value": "weapon_usp_silencer",
+        "text": "USP 消音版"
+      },
+      {
+        "value": "weapon_glock",
+        "text": "格洛克 18 型"
+      },
+      {
+        "value": "weapon_hkp2000",
+        "text": "P2000"
+      },
+      {
+        "value": "weapon_p250",
+        "text": "P250"
+      },
+      {
+        "value": "weapon_fiveseven",
+        "text": "FN57"
+      },
+      {
+        "value": "weapon_revolver",
+        "text": "R8 左轮手枪"
+      },
+      {
+        "value": "weapon_tec9",
+        "text": "Tec-9"
+      },
+      {
+        "value": "weapon_elite",
+        "text": "双持贝瑞塔"
+      },
+      {
+        "value": "weapon_cz75a",
+        "text": "CZ75 自动手枪"
+      },
+      {
+        "value": "weapon_zeus",
+        "text": "电击枪"
+      }
+    ]
+  },
+  {
+    "value": "smg",
+    "text": "微型冲锋枪",
+    "subType": [
+      {
+        "value": "weapon_mp9",
+        "text": "MP9"
+      },
+      {
+        "value": "weapon_mac10",
+        "text": "MAC-10"
+      },
+      {
+        "value": "weapon_ump45",
+        "text": "UMP-45"
+      },
+      {
+        "value": "weapon_p90",
+        "text": "P90"
+      },
+      {
+        "value": "weapon_mp7",
+        "text": "MP7"
+      },
+      {
+        "value": "weapon_bizon",
+        "text": "PP-野牛"
+      },
+      {
+        "value": "weapon_mp5sd",
+        "text": "MP5-SD"
+      }
+    ]
+  },
+  {
+    "value": "shotgun",
+    "text": "霰弹枪",
+    "subType": [
+      {
+        "value": "weapon_xm1014",
+        "text": "XM1014"
+      },
+      {
+        "value": "weapon_mag7",
+        "text": "MAG-7"
+      },
+      {
+        "value": "weapon_sawedoff",
+        "text": "截短霰弹枪"
+      },
+      {
+        "value": "weapon_nova",
+        "text": "新星"
+      }
+    ]
+  },
+  {
+    "value": "machinegun",
+    "text": "机枪",
+    "subType": [
+      {
+        "value": "weapon_m249",
+        "text": "M249"
+      },
+      {
+        "value": "weapon_negev",
+        "text": "内格夫"
+      }
+    ]
+  },
+  {
+    "value": "sticker",
+    "text": "印花",
+    "subType": [
+      {
+        "value": "sticker_tournament23",
+        "text": "24上海"
+      },
+      {
+        "value": "set_stkr_craft_01",
+        "text": "元素手作"
+      },
+      {
+        "value": "set_stkr_craft_02",
+        "text": "角色手作"
+      },
+      {
+        "value": "sticker_tournament22",
+        "text": "24哥本哈根"
+      },
+      {
+        "value": "crate_sticker_pack_community_2024_capsule",
+        "text": "伏击"
+      },
+      {
+        "value": "sticker_tournament21",
+        "text": "23巴黎"
+      },
+      {
+        "value": "crate_sticker_pack_community2022_capsule",
+        "text": "间谍"
+      },
+      {
+        "value": "sticker_tournament20",
+        "text": "22里约"
+      },
+      {
+        "value": "crate_sticker_pack_csgo10_capsule",
+        "text": "十周年"
+      },
+      {
+        "value": "sticker_tournament19",
+        "text": "22安特卫普"
+      },
+      {
+        "value": "crate_sticker_pack_spring2022_capsule",
+        "text": "作战室"
+      },
+      {
+        "value": "crate_sticker_pack_bf2042_capsule_lootlist",
+        "text": "战地2042"
+      },
+      {
+        "value": "sticker_tournament18",
+        "text": "21斯德哥尔摩"
+      },
+      {
+        "value": "crate_sticker_pack_riptide_surfshop_lootlist",
+        "text": "激流冲浪店"
+      },
+      {
+        "value": "crate_sticker_pack_op_riptide_capsule_lootlist",
+        "text": "激流大行动"
+      },
+      {
+        "value": "sticker_community2021",
+        "text": "2021社区"
+      },
+      {
+        "value": "poorly_drawn",
+        "text": "Poorly Drawn"
+      },
+      {
+        "value": "sticker_2020rmr",
+        "text": "2020RMR"
+      },
+      {
+        "value": "sticker_broken_fang",
+        "text": "狂牙大行动"
+      },
+      {
+        "value": "sticker_recoil",
+        "text": "压枪"
+      },
+      {
+        "value": "warhammer_sticker",
+        "text": "战锤40K"
+      },
+      {
+        "value": "alyx_sticker_capsule",
+        "text": "半衰期:Alyx"
+      },
+      {
+        "value": "halo_capsule",
+        "text": "光环"
+      },
+      {
+        "value": "shattered_web",
+        "text": "裂网大行动"
+      },
+      {
+        "value": "cs20_capsule",
+        "text": "CS20"
+      },
+      {
+        "value": "2019_StarLadder_Berlin_Major",
+        "text": "19年柏林"
+      },
+      {
+        "value": "crate_sticker_pack_chicken_capsule_lootlist",
+        "text": "小鸡"
+      },
+      {
+        "value": "crate_sticker_pack_feral_predators_capsule_lootlist",
+        "text": "猛兽"
+      },
+      {
+        "value": "sticker_tournament15",
+        "text": "19年卡托"
+      },
+      {
+        "value": "skill_groups_capsule",
+        "text": "段位印花"
+      },
+      {
+        "value": "sticker_tournament14",
+        "text": "18年伦敦"
+      },
+      {
+        "value": "sticker_tournament13",
+        "text": "18年波士顿"
+      },
+      {
+        "value": "sticker_tournament12",
+        "text": "17年克拉科夫"
+      },
+      {
+        "value": "sticker_tournament11",
+        "text": "17年亚特兰大"
+      },
+      {
+        "value": "sticker_tournament10",
+        "text": "16年科隆"
+      },
+      {
+        "value": "sticker_tournament9",
+        "text": "16年哥伦布"
+      },
+      {
+        "value": "sticker_tournament8",
+        "text": "15年DH"
+      },
+      {
+        "value": "sticker_tournament7",
+        "text": "15年科隆"
+      },
+      {
+        "value": "sticker_tournament6",
+        "text": "15年卡托维兹"
+      },
+      {
+        "value": "sticker_tournament5",
+        "text": "14年DH"
+      },
+      {
+        "value": "sticker_tournament4",
+        "text": "14年科隆"
+      },
+      {
+        "value": "sticker_tournament3",
+        "text": "14年卡托维兹"
+      },
+      {
+        "value": "crate_sticker_pack_comm2018_01_capsule_lootlist",
+        "text": "18年社区印花"
+      },
+      {
+        "value": "crate_sticker_pack01",
+        "text": "1号印花"
+      },
+      {
+        "value": "crate_sticker_pack02",
+        "text": "2号印花"
+      },
+      {
+        "value": "crate_sticker_pack_enfu_capsule_lootlist",
+        "text": "Enfu印花"
+      },
+      {
+        "value": "crate_sticker_pack_illuminate_capsule_01_lootlist",
+        "text": "点亮中国1号"
+      },
+      {
+        "value": "crate_sticker_pack_illuminate_capsule_02_lootlist",
+        "text": "点亮中国2号"
+      },
+      {
+        "value": "crate_sticker_pack_community01",
+        "text": "1号社区印花"
+      },
+      {
+        "value": "crate_sticker_pack_bestiary_capsule_lootlist",
+        "text": "动物寓言印花"
+      },
+      {
+        "value": "crate_sticker_pack_slid3_capsule_lootlist",
+        "text": "Slid3印花"
+      },
+      {
+        "value": "crate_sticker_pack_sugarface_capsule_lootlist",
+        "text": "糖果脸谱印花"
+      },
+      {
+        "value": "crate_sticker_pack_pinups_capsule_lootlist",
+        "text": "海报女郎印花"
+      },
+      {
+        "value": "crate_sticker_pack_team_roles_capsule_lootlist",
+        "text": "团队定位印花"
+      },
+      {
+        "value": "sticker_other",
+        "text": "其他印花"
+      }
+    ]
+  },
+  {
+    "value": "type_customplayer",
+    "text": "探员",
+    "subType": [
+      {
+        "value": "agent_team_ct",
+        "text": "反恐精英"
+      },
+      {
+        "value": "agent_team_t",
+        "text": "恐怖分子"
+      }
+    ]
+  },
+  {
+    "value": "other",
+    "text": "其他",
+    "subType": [
+      {
+        "value": "csgo_type_weaponcase",
+        "text": "武器箱"
+      },
+      {
+        "value": "csgo_type_musickit",
+        "text": "音乐盒"
+      },
+      {
+        "value": "csgo_type_tool",
+        "text": "工具"
+      },
+      {
+        "value": "csgo_type_spray",
+        "text": "涂鸦"
+      },
+      {
+        "value": "csgo_type_ticket",
+        "text": "通行证"
+      },
+      {
+        "value": "csgo_type_collectible",
+        "text": "收藏品"
+      },
+      {
+        "value": "csgo_tool_patch",
+        "text": "布章"
+      },
+      {
+        "value": "csgo_tool_keychain",
+        "text": "挂件"
+      },
+      {
+        "value": "csgo_tool_gifttag",
+        "text": "礼物"
+      }
+    ]
+  }
+]

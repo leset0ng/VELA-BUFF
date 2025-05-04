@@ -1,0 +1,62 @@
+<import name="buffItem" src="@components/buffItem/buffItem.ux" />
+<import name="topbar" src="@components/topbar/topbar.ux" />
+<template>
+  <div class="page">
+    <topbar title="搜索结果" />
+    <scroll class="list" scroll-y="true">
+      <!-- 渲染搜索结果 -->
+      <block for="{{searchResults}}">
+        <buffItem itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" style="margin-bottom: 10px" />
+      </block>
+    </scroll>
+  </div>
+</template>
+
+<script>
+  import {parseData} from "@utils/buffData";
+  import prompt from "@system.prompt";
+  import { CacheService } from "@utils/cacheservice";
+
+  export default {
+    private: {
+      searchResults: [],
+      searchText: ''
+    },
+    async onInit() {
+      const router = require('@system.router');
+      this.searchText = router.getParams().searchText;
+      prompt.showToast({message: "正在搜索..."});
+      try {
+        const data = await globalThis.buff.searchInventory(this.searchText);
+        if(globalThis.settingsManager.get("saveSearch")) await CacheService.cacheSearch(data, this.searchText);
+        this.searchResults = parseData({
+          items: data.items,
+          goods_infos: await CacheService.getAllGoods(),
+          fop_str: ""
+        });
+      } catch (err) {
+        prompt.showToast({ message: "搜索失败,使用缓存数据" });
+        this.searchResults = await CacheService.getSearch(this.searchText);
+      }
+    }
+  }
+</script>
+
+<style>
+  .page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 336px;
+    height: 480px;
+    background-color: black;
+    flex-direction: column;
+  }
+  .list {
+    flex: 1;
+    flex-direction: column;
+    padding: 6px;
+    padding-top: 60px;
+    align-items: center;
+  }
+</style>

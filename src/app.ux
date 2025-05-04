@@ -1,4 +1,5 @@
 <script>
+import device from '@system.device'
 import BUFF from "./buff/buff"
 import fetch from "./utils/fetch"
 import fetchBig from "./utils/fetchBig"
@@ -8,6 +9,12 @@ import {clearImageCache} from "./utils/imgCache"
 const buff = new BUFF(fetch, fetchBig)
 globalThis.settingsManager = new SettingsManager()
 globalThis.buff = buff
+device.getInfo({
+  success: (res) => {
+    globalThis.screenType = res.screenShape
+    globalThis.topbarHeight = globalThis.screenType  == "rect" ? 60 : 80
+  }
+})
 export default {
   onDestroy() {
     if (!globalThis.settingsManager.get("saveCache")) {

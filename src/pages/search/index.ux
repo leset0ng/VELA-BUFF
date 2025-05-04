@@ -1,0 +1,137 @@
+<import name="input-method" src="@components/InputMethod/InputMethod.ux"></import>
+<import name="topbar" src="@components/topbar/topbar.ux" />
+<template>
+  <div class="page" style="padding-top:{{topbarHeight}}px;">
+    <div class="search-container">
+      <text class="search-text" @click="changeInputState">{{searchText||"点击输入文本"}}_</text>
+      <image class="search-button" src="/common/search.png" @click="onSearch"></image>
+    </div>
+    <!-- 添加筛选栏 -->
+    <div class="filter-container">
+      <text for="{{itemTypes}}" class="filter-item" @click="onFilterSelect($item.value)">{{$item.text}}</text>
+    </div>
+    <input-method
+      hide="{{hideInput}}"
+      maxlength="5"
+      vibratemode="short"
+      screentype="rect"
+      @visibility-change="onVisibilityChange"
+      @delete="onDelete"
+      @complete="onComplete"
+    ></input-method>
+    <topbar title="搜索" onback="onback" prevent-default="true"/>
+  </div>
+</template>
+
+<script>
+import router from "@system.router"
+import itemTypes from '@src/buff/itemTypes.js' // 导入 itemTypes.js
+
+const { topbarHeight } = globalThis
+
+  export default {
+    private: {
+      searchText: '',
+      hideInput: true,
+          itemTypes,
+      topbarHeight,
+    },
+    onBackPress() {
+        this.onback();
+        return true;
+    },
+    onback() {
+        if (!this.hideInput) return this.hideInput = true;
+        router.back();
+    },
+    onVisibilityChange(evt) {
+      console.log('显示状态变更:' + JSON.stringify(evt));
+    },
+    onDelete() {
+      this.searchText = this.searchText.slice(0, -1);
+      console.log('删除字符');
+    },
+    changeInputState() {
+      this.hideInput = !this.hideInput;
+    },
+    onComplete(evt) {
+      this.searchText += evt.detail.content;
+      console.log('返回字符:' + JSON.stringify(evt));
+      /* // 跳转到搜索结果页面
+      const router = require('@system.router');
+      router.push({
+        uri: '/pages/searchResult',
+        params: {
+          searchText: this.searchText
+        }
+      }); */
+    },
+    onSearch() {
+      // 这里可以添加搜索逻辑
+      const router = require('@system.router');
+      router.push({
+        uri: '/pages/searchResult',
+        params: {
+          searchText: this.searchText
+        }
+      });
+    },
+    onFilterSelect(value) {
+      console.log('选择的筛选类型: ', value);
+      // 这里可以添加筛选逻辑
+    }
+  }
+</script>
+
+<style>
+  .page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 336px;
+    height: 480px;
+    background-color: black;
+    flex-direction: column;
+    align-items: center;
+  }
+  .search-container {
+    width: 336px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    background-color: #262626;
+    border: #ffffff20;
+    border-radius: 24px;
+    padding: 10px;
+    padding-right: 50px;/* 40+10 */
+    margin-bottom: 10px
+  }
+  .search-text {
+    color: white;
+    font-size: 30px;
+    width: 260px;
+  }
+  .search-button {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    right: 10px;
+  }
+  /* 添加筛选栏样式 */
+  .filter-container {
+    position: relative;
+    width: 336px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    margin-bottom: 10px;
+  }
+  .filter-item {
+    color: white;
+    font-size: 20px;
+    padding: 5px 10px;
+    margin: 5px;
+    background-color: #333333;
+    border-radius: 12px;
+  }
+</style>
