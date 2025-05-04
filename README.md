@@ -5,21 +5,21 @@
 ### 1. 开发
 
 ```
-npm install
-npm run start
+pnpm install
+pnpm run start
 ```
 
 ### 2. 构建
 
 ```
-npm run build
-npm run release
+pnpm run build
+pnpm run release
 ```
 
 ### 3. 调试
 
 ```
-npm run watch
+pnpm run watch
 ```
 ## 了解更多
 
