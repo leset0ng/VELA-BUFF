@@ -23,7 +23,7 @@
 
 <script>
 import textCache from "@utils/textCache"
-import router from "@system.router"
+const { router } = globalThis
 import buffImg2 from "../../buff/buffImg2"
 import prompt from "@system.prompt"
 
@@ -54,7 +54,7 @@ export default {
     }).catch(console.error)
   }, goLogin() {
     if (this.logined) return
-    router.push({ uri: "/pages/login" })
+    router.push("/pages/login")
   }, logout() {
     globalThis.buff.logout()
     this.logined = false
@@ -72,6 +72,7 @@ export default {
   position: relative;
 }
 .card{
+  width: 336px;
   margin: 6px;
   padding: 10px;
   background-color: #262626;

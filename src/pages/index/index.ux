@@ -21,12 +21,11 @@
 </template>
 
 <script>
-import router from "@system.router"
 /* import folme from "@system.folme" */
 import {parseData} from "@utils/buffData"
 import prompt from "@system.prompt"
 
-const { topbarHeight } = globalThis
+const { topbarHeight,router } = globalThis
 
 export default {
   private: {
@@ -78,7 +77,7 @@ export default {
     ) */
   },
   route(route) {
-    router.push({uri: route})
+    router.push(route)
   },
   onBackPress() {
     if (this.menu_show) {

@@ -1,6 +1,6 @@
-import file from '@system.file' 
-import request from '@system.request' 
 import crypto from '@system.crypto'
+import file from '@system.file'
+import request from '@system.request'
 import runAsyncFunc from "./runAsyncFunc"
 
 const cacheIng = new Map()
@@ -23,7 +23,6 @@ export async function getImage(url) {
     let res
     cacheIng.set(cachePath,new Promise((resolve, reject) => { res = resolve }))
     const { token } = await runAsyncFunc(request.download, { url, filename: cachePath })
-    console.log("getImage download", url, cachePath, token)
     const onDownloadComplete = runAsyncFunc(request.onDownloadComplete, { token })
     const { uri } = await onDownloadComplete
     res(uri)
@@ -32,11 +31,10 @@ export async function getImage(url) {
 }
 function getCachePath(url) {
     const name = crypto.hashDigest({ data: url, algo: "MD5" })
-    console.log("getCachePath", url, name)
     return `internal://files/cache/images/${name}.png`
 }
 export async function clearImageCache() {
-    await runAsyncFunc(file.rmdir, { uri: "internal://files/cache/images/", recursive: true }) 
+    await runAsyncFunc(file.rmdir, { uri: "internal://files/cache/images/", recursive: true })
 }
 export async function getSize() {
     const { fileList } = await runAsyncFunc(file.list, { uri: "internal://files/cache/images/" })

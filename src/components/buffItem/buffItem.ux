@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import router from "@system.router"
+const { router } = globalThis
 import buffImg2 from "../../buff/buffImg2"
 export default {
     props: ["style","itemdata","goodsdata"],
@@ -45,7 +45,6 @@ export default {
       stickers: [],
   },
   onInit() {
-    console.log(this.itemdata,this.goodsdata)
     this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url), 304, 304)
     this.name = this.goodsdata.name
 
@@ -65,7 +64,7 @@ export default {
   routeDetail() {
     globalThis.itemToshow = this.itemdata
     globalThis.goodsToshow = this.goodsdata
-    router.push({ uri: "pages/itemInfo" })
+    router.push("pages/itemInfo")
   }
 
 }

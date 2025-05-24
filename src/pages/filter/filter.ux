@@ -1,0 +1,12 @@
+<import name="topbar" src="@components/topbar/topbar.ux"></import>
+<template>
+  <div>
+    <topbar title="筛选"></topbar>
+  </div>
+</template>
+
+<script>
+ export default {}
+</script>
+
+<style></style>

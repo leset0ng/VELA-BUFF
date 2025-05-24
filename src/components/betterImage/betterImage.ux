@@ -7,7 +7,7 @@
 
 <script>
 import { getImage } from "@utils/imgCache"
-import router from "@system.router"
+const router = globalThis.router
 /* import media from "@system.media" 手环无法双指放大，*/
 
 let ani, loading = true
@@ -48,7 +48,7 @@ export default {
         if (this.preventDefault) return
             /* media.previewImage({ current:this.src }) */
         console.log("viewBig", this.src)
-        router.push({ uri: "pages/bigImg", params: { uri: this.src } })
+        router.push("pages/bigImg",{ uri: this.src })
     },async setUrl() {
         try {
             if (!this.url) return;

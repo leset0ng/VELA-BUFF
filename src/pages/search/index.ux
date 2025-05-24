@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import router from "@system.router"
+const { router } = globalThis
 import itemTypes from '@src/buff/itemTypes.js' // 导入 itemTypes.js
 
 const { topbarHeight } = globalThis

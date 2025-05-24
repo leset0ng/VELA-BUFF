@@ -48,7 +48,6 @@ export default function modifyImageSize(url: string, newWidth: number, newHeight
     const newQuery = Object.entries(params)
         .map(([k, v]) => `${k}=${v}`)
         .join('&');
-    const result = `${base}?${newQuery}`;    
-    console.log("buffImg", "缩小图片", url, result);
+    const result = `${base}?${newQuery}`;
     return result;
 }

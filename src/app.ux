@@ -4,7 +4,10 @@ import BUFF from "./buff/buff"
 import fetch from "./utils/fetch"
 import fetchBig from "./utils/fetchBig"
 import SettingsManager from "./utils/SettingsManager"
-import {clearImageCache} from "./utils/imgCache"
+import { clearImageCache } from "./utils/imgCache"
+import router from './utils/router'
+
+globalThis.router = router
 
 const buff = new BUFF(fetch, fetchBig)
 globalThis.settingsManager = new SettingsManager()

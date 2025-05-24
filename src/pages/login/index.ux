@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import router from '@system.router'
+const { router } = globalThis
 import prompt from '@system.prompt'
 
 let abortController
@@ -39,7 +39,7 @@ export default {
       }
       await globalThis.buff.login(abortController,callback)
       router.back()
-    } catch (e) { 
+    } catch (e) {
       prompt.showToast({ message: `登录失败，${e.message}` })
       console.log(e)
     }

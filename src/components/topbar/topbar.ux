@@ -16,9 +16,8 @@
 </template>
 
 <script>
-import router from "@system.router"
 let timer
-const {screenType,topbarHeight} = globalThis
+const {screenType,topbarHeight,router} = globalThis
 export default {
   props: ["title","menu","preventDefault"],
   data: {
@@ -30,7 +29,12 @@ export default {
       this.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
     updTime();
-    timer = setInterval(()=>updTime(), 1000);
+    timer = setInterval(() => updTime(), 1000);
+    if (!this.preventDefault) {
+      this._parentVM.$options.onBackPress = () => {
+        return this.handleBackPress();
+      }
+    }
   }, onBackPress() {
     return this.handleBackPress();
   },

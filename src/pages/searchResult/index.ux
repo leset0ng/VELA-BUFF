@@ -23,7 +23,6 @@
       searchText: ''
     },
     async onInit() {
-      const router = require('@system.router');
       this.searchText = router.getParams().searchText;
       prompt.showToast({message: "正在搜索..."});
       try {

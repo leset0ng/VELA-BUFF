@@ -22,11 +22,10 @@
 <script>
 import {parseData} from "@utils/buffData"
 import prompt from "@system.prompt"
-import router from "@system.router"
 import { CacheService } from "@utils/cacheservice"
 import {cacheText, getCacheText} from "@utils/textCache"
 
-const { topbarHeight } = globalThis
+const { topbarHeight ,router } = globalThis
 
 export default {
   protected: {page: 1},
@@ -68,11 +67,11 @@ export default {
     }
   },
   prevPage() {
-    if (this.page > 1) router.replace({uri: "/pages/inventory", params: {page: (+this.page) - 1}})
+    if (this.page > 1) router.replace("/pages/inventory",{page: (+this.page) - 1})
   },
   nextPage() {
     if (this.page < this.totalPages)
-      router.replace({uri: "/pages/inventory", params: {page: (+this.page) + 1}})
+      router.replace("/pages/inventory",{page: (+this.page) + 1})
   },
   onScroll(e) {
     this.scrollTop = e.scrollY
