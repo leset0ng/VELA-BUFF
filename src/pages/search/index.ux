@@ -4,12 +4,10 @@
   <div class="page" style="padding-top:{{topbarHeight}}px;">
     <div class="search-container">
       <text class="search-text" @click="changeInputState">{{searchText||"点击输入文本"}}_</text>
-      <image class="search-button" src="/common/search.png" @click="onSearch"></image>
+      <image class="search-button" src="/common/search.png" ></image>
     </div>
-    <!-- 添加筛选栏 -->
-    <div class="filter-container">
-      <text for="{{itemTypes}}" class="filter-item" @click="onFilterSelect($item.value)">{{$item.text}}</text>
-    </div>
+    <input type="button" class="button" value="筛选" @click="routeFilter"></input>
+    <input type="button" class="button" value="搜索" @click="onSearch"></input>
     <input-method
       hide="{{hideInput}}"
       maxlength="5"
@@ -44,9 +42,6 @@ const { topbarHeight } = globalThis
         if (!this.hideInput) return this.hideInput = true;
         router.back();
     },
-    onVisibilityChange(evt) {
-      console.log('显示状态变更:' + JSON.stringify(evt));
-    },
     onDelete() {
       this.searchText = this.searchText.slice(0, -1);
       console.log('删除字符');
@@ -67,18 +62,13 @@ const { topbarHeight } = globalThis
       }); */
     },
     onSearch() {
-      // 这里可以添加搜索逻辑
-      const router = require('@system.router');
-      router.push({
-        uri: '/pages/searchResult',
-        params: {
+      router.push( '/pages/searchResult',
+        {
           searchText: this.searchText
-        }
-      });
-    },
-    onFilterSelect(value) {
-      console.log('选择的筛选类型: ', value);
-      // 这里可以添加筛选逻辑
+        });
+  },
+    routeFilter() {
+      router.push('/pages/filter');
     }
   }
 </script>
@@ -100,7 +90,7 @@ const { topbarHeight } = globalThis
     align-items: center;
     justify-content: start;
     background-color: #262626;
-    border: #ffffff20;
+    border: #ffffff80 1px solid;
     border-radius: 24px;
     padding: 10px;
     padding-right: 50px;/* 40+10 */
@@ -117,21 +107,13 @@ const { topbarHeight } = globalThis
     height: 30px;
     right: 10px;
   }
-  /* 添加筛选栏样式 */
-  .filter-container {
-    position: relative;
+  .button{
     width: 336px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: start;
-    margin-bottom: 10px;
-  }
-  .filter-item {
+    height: 50px;
+    background-color: #262626;
+    border:5px solid rgba(255, 255, 255, 0.06);
+    border-radius: 99px;
     color: white;
-    font-size: 20px;
-    padding: 5px 10px;
-    margin: 5px;
-    background-color: #333333;
-    border-radius: 12px;
+    margin-bottom: 10px;
   }
 </style>

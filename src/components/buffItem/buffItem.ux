@@ -45,12 +45,12 @@ export default {
       stickers: [],
   },
   onInit() {
-    this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url), 304, 304)
+    this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url ?? this.goodsdata?.goods_info?.icon_url), 304, 304)
     this.name = this.goodsdata.name
-
-    this.tags.push({ name:"", class: "rarity_" + (this.goodsdata.tags?.rarity?.internal_name?.split("_")[0] ?? "common")+"_background" })
-    this.tags.push({ name: this.goodsdata?.tags?.exterior?.localized_name, class: "color-" + (this.goodsdata?.tags?.exterior?.id - 509) })//崭新是510
-    if(this.goodsdata.tags?.quality?.id != 516)this.tags.push({ name: this.goodsdata.tags.quality.localized_name, class: "quality" })
+    const tags = this.goodsdata.tags ?? this.goodsdata?.goods_info?.info?.tags
+    this.tags.push({ name:"", class: "rarity_" + (tags?.rarity?.internal_name?.split("_")[0] ?? "common")+"_background" })
+    this.tags.push({ name: this.tags?.exterior?.localized_name, class: "color-" + (tags?.exterior?.id - 509) })//崭新是510
+    if(tags?.quality?.id != 516)this.tags.push({ name: tags?.quality?.localized_name, class: "quality" })
     this.tags.push({ name: this.itemdata?.asset_info?.info?.paintseed, })
 
     this.exterior = this.itemdata?.asset_info?.paintwear
@@ -64,7 +64,8 @@ export default {
   routeDetail() {
     globalThis.itemToshow = this.itemdata
     globalThis.goodsToshow = this.goodsdata
-    router.push("pages/itemInfo")
+    if(this.itemdata)router.push("pages/itemInfo")
+    else router.push("pages/goodsInfo")
   }
 
 }

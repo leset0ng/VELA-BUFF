@@ -68,8 +68,15 @@
         "component": "about"
       },"pages/search": {
         "component": "index"
-      },"pages/searchResult": {
+      },
+      "pages/searchResult": {
         "component": "index"
+      },
+      "pages/filter": {
+        "component": "filter"
+      },
+      "pages/menu": {
+        "component": "menu"
       }
     }
   }

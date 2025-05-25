@@ -1,41 +1,30 @@
-<import name="buffItem" src="@components/buffItem/buffItem.ux" />
+<import name="buffItemList" src="@components/buffItem/buffItemLazyList.ux" />
 <import name="topbar" src="@components/topbar/topbar.ux" />
 <template>
   <div class="page">
+    <buffItemList items="{{searchResults}}" enablefresh="true" />
     <topbar title="搜索结果" />
-    <scroll class="list" scroll-y="true">
-      <!-- 渲染搜索结果 -->
-      <block for="{{searchResults}}">
-        <buffItem itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" style="margin-bottom: 10px" />
-      </block>
-    </scroll>
   </div>
 </template>
 
 <script>
   import {parseData} from "@utils/buffData";
-  import prompt from "@system.prompt";
-  import { CacheService } from "@utils/cacheservice";
 
-  export default {
+export default {
+  public: {
+    searchText:""
+  },
     private: {
       searchResults: [],
-      searchText: ''
     },
-    async onInit() {
-      this.searchText = router.getParams().searchText;
-      prompt.showToast({message: "正在搜索..."});
+  async onInit() {
       try {
-        const data = await globalThis.buff.searchInventory(this.searchText);
-        if(globalThis.settingsManager.get("saveSearch")) await CacheService.cacheSearch(data, this.searchText);
-        this.searchResults = parseData({
-          items: data.items,
-          goods_infos: await CacheService.getAllGoods(),
-          fop_str: ""
-        });
-      } catch (err) {
-        prompt.showToast({ message: "搜索失败,使用缓存数据" });
-        this.searchResults = await CacheService.getSearch(this.searchText);
+        const { savedCategory, buff } = globalThis
+        await buff.ready
+        this.searchResults = (await buff.search(1, this.searchText, `category=${savedCategory}`))
+          .items.map(item=>{return {goods_info:item}})
+      } catch (error) {
+        console.error("Error fetching search results:", error);
       }
     }
   }

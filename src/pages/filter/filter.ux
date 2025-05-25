@@ -1,12 +1,138 @@
 <import name="topbar" src="@components/topbar/topbar.ux"></import>
 <template>
-  <div>
+  <div class="page">
+    <scroll scroll-y="true" class="content">
+      <div class="filter-group" for="{{type in types}}">
+        <text class="filter-header {{type.selected?'selected':''}}" onclick="select(type.key,0)">{{type.text}}</text>
+        <text class="filter-item {{$item.selected?'selected':''}}" for="{{type.subTypes}}" if="{{type.show}}" onclick="select(type.key,$item.key)">{{$item.text}}</text>
+      </div>
+    </scroll>
+    <img src="/common/Clear_A.png" class="fab {{screenType}}_fab" onclick="clear"></img>
     <topbar title="筛选"></topbar>
   </div>
 </template>
 
 <script>
- export default {}
+import itemTypes from '../../buff/itemTypes.js' // 导入 itemTypes.js
+export default {
+  private: {
+    types: [], // 定义 itemTypes 变量
+    screenType:globalThis.screenType
+    },
+    onInit() {
+    console.log(itemTypes);
+    for (const key of Object.keys(itemTypes)) {
+        const type = itemTypes[key]
+        const subTypes = []
+        for (const subKey of Object.keys(type.subType)) {
+            subTypes.push({ text: type.subType[subKey], key: subKey });
+        }
+      this.types.push({ text: type.text, key, subTypes});
+    }
+  },
+  select(key,subKey){
+    if(subKey){
+      const type = this.types.find((e) => e.key == key)
+      const subType = type.subTypes.find((e) => e.key == subKey)
+      if (subType.selected) {
+        subType.selected = false;
+        return this.save()
+      }
+      type.selected = false;
+      subType.selected = true;
+    }
+    else {
+      const type=this.types.find((e)=>e.key==key)
+      for (const subType of type.subTypes) {
+        subType.selected = false;
+      }
+      if (type.selected) {
+        type.show = false;
+        type.selected = false;
+        return this.save()
+      }
+      type.selected = true;
+      type.show = true;
+    }
+    this.save()
+  },
+  clear(){
+    for (const type of this.types) {
+      type.selected = false;
+      type.show = false;
+      for (const subType of type.subTypes) {
+        subType.selected = false;
+      }
+    }
+    this.save()
+  },
+  save(){
+    const selectedTypes = [];
+    for (const type of this.types) {
+      if (type.selected) {
+        selectedTypes.push(type.key);
+      } else if(type.show) {
+        for (const subType of type.subTypes) {
+          if (subType.selected) {
+            selectedTypes.push(subType.key);
+          }
+        }
+      }
+    }
+    console.log(selectedTypes);
+    globalThis.savedCategory=selectedTypes.join(',')
+  }
+ }
 </script>
 
-<style></style>
+<style>
+@import url(../global.css);
+
+.title {
+  margin: 10px;
+  font-size: 32px;
+  color: #ffffff;
+}
+.rect_fab {
+  right: 25px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  background-color: #262626;
+  padding: 10px;
+  border-radius: 20px;
+  min-height: 112px;
+  margin-top: 6px;
+}
+.filter-group {
+  padding: 10px;
+  margin: 2px;
+  margin-top: 10px;
+  background-color: #262626;
+  border-radius: 20px;
+  flex-wrap: wrap;
+}
+.filter-header {
+  width: 100%;
+  font-size: 24px;
+  color: #ffffff;
+  background-color: #262626;
+  padding: 10px;
+    margin: 2px;
+    border-radius: 10px;
+}
+.filter-item{
+    padding: 10px;
+    margin: 2px;
+    font-size: 24px;
+    border-radius: 10px;
+    background-color: #333333;
+}
+.selected {
+  background-color: #007AFF;
+  color: #ffffff;
+}
+</style>

@@ -1,7 +1,7 @@
 import router from "@system.router"
 
 const history = [{ uri: '/pages/index' }]
-
+//全部用replace，节省内存
 export default {
     push(uri, params) {
         history.push({uri, params})

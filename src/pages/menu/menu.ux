@@ -1,0 +1,55 @@
+<import name="topbar" src="@components/topbar/topbar.ux" />
+<template>
+    <div class="page">
+        <list static class="menu" id="menu" style="padding-top:{{topbarHeight}}px;">
+            <list-item static class="menu-item" type="menu" for.static="{{pages}}" onClick="route($item.route)">
+                <img static src="{{$item.img}}" class="menu-icon" />
+                <text static class="menu-text">{{ $item.name }}</text>
+            </list-item>
+        </list>
+        <topbar title="菜单"></topbar>
+    </div>
+</template>
+
+<script>
+const {topbarHeight, router} = globalThis
+export default {
+  private: {
+    pages: [
+      {name: "用户详情", route: "pages/user", img: "/common/user.png"},
+      {name: "库存", route: "pages/inventory", img: "/common/inventory.png"},
+      {name: "设置", route: "pages/setting", img: "/common/settings.png"},
+      {name: "关于", route: "pages/about", img: "/common/info.png"},
+      {name: "搜索", route: "pages/search", img: "/common/search.png"}
+    ],
+    topbarHeight
+  },
+  route(route) {
+    router.push(route)
+  }
+}
+</script>
+
+<style>
+@import url(../global.css);
+.menu {
+  position: absolute;
+  flex-direction: column;
+  width: 336px;
+  height: 100%;
+  padding: 10px;
+  align-items: center;
+  background-color: black;
+  /*transform: translateY(-100%);*/
+}
+.menu-item {
+  position: relative;
+  height: 80px;
+  background-color: #262626;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 24px;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

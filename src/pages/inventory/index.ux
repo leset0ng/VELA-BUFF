@@ -1,21 +1,14 @@
 <import name="topbar" src="@components/topbar/topbar.ux" />
-<import name="buffItem" src="@components/buffItem/buffItem.ux" />
+<import name="buffItemList" src="@components/buffItem/buffItemLazyList.ux" />
 <template>
   <div class="page">
-    <scroll class="list" style="padding-top:{{topbarHeight}};" scroll-y="true" onscroll="onScroll">
-      <text class="price">{{ price }}</text>
-      <!-- 渲染占位符和可见的 buffItem -->
-      <block for="{{items}}">
-        <div if="{{$item.isPlaceholder}}"  style="height: 263px; width: 324px; background-color: #262626; border-radius: 20px; margin-bottom: 10px;"></div>
-        <buffItem else itemdata="{{$item.item}}" goodsdata="{{$item.goods_info}}" style="margin-bottom: 10px" />
-      </block>
-    </scroll>
+    <buffItemList items="{{items}}"/>
     <div class="pagination">
       <input type="button" class="btn" disabled="{{page <= 1}}" value="上一页" onclick="prevPage" />
       <text class="page-info">{{ page }} / {{ totalPages }}</text>
       <input type="button" class="btn" disabled="{{page >= totalPages}}" value="下一页" onclick="nextPage" />
     </div>
-    <topbar title="我的库存" />
+    <topbar title="{{price?price:'我的库存'}}" />
   </div>
 </template>
 
@@ -72,28 +65,6 @@ export default {
   nextPage() {
     if (this.page < this.totalPages)
       router.replace("/pages/inventory",{page: (+this.page) + 1})
-  },
-  onScroll(e) {
-    this.scrollTop = e.scrollY
-    // 添加防抖逻辑
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
-    }
-    this.debounceTimer = setTimeout(() => {
-      this.calculateVisibleItems();
-    }, 300); // 300 毫秒的防抖时间，可以根据实际情况调整
-  },
-  calculateVisibleItems() {
-    const itemHeight = 273; // 每个 buffItem 的高度，包含 margin-bottom
-    const visibleStart = Math.floor(this.scrollTop / itemHeight);
-    const visibleEnd = Math.ceil((this.scrollTop + 480) / itemHeight); // 假设页面高度为 480
-
-    this.visibleStart = Math.max(0, visibleStart - 2); // 预加载前 2 个
-    this.visibleEnd = Math.min(this.items.length, visibleEnd + 2); // 预加载后 2 个
-
-    this.items.forEach((item, index) => {
-      item.isPlaceholder = index < this.visibleStart || index >= this.visibleEnd;
-    })
   }
 }
 </script>
@@ -107,18 +78,6 @@ export default {
   height: 480px;
   background-color: black;
   flex-direction: column;
-}
-.list {
-  flex: 1;
-  flex-direction: column;
-  padding: 6px;
-  padding-bottom: 160px;
-  align-items: center;
-}
-.price {
-  font-size: 20px;
-  color: #ffffff;
-  margin-bottom: 10px;
 }
 .pagination {
   position: absolute;
