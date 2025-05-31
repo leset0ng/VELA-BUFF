@@ -1,0 +1,187 @@
+<import name="topbar" src="@components/topbar/topbar.ux"></import>
+<template>
+    <div class="page">
+        <div class="content">
+            <div class="chart-container">
+                <chart class="chart" type="line" options="{{options}}" datasets="{{datasets}}"></chart>
+                <text class="max">{{options.yAxis.max}}</text>
+                <text class="min">{{options.yAxis.min}}</text>
+                <text class="mintime">{{mintime}}</text>
+                <text class="maxtime">{{maxtime}}</text>
+            </div>
+            <div class="row"style="justify-content: space-between;">
+                <text class="desc">
+                    <span for="{{datasets}}" style="color: {{$item.strokeColor}};">
+                        {{$item.name}}
+                    </span>
+                </text>
+                <text class="desc" id="choosed" onclick="showchooser" show="{{!chooser_show}}">{{days.find((e)=>e.days==days_choosed).text}}></text>
+            </div>
+            <div id="choose" show="{{chooser_show}}">
+                <text for="{{days}}" class="choose_text {{$item.days==days_choosed}}" onclick="choose($item.days)">
+                    {{$item.text}}
+                </text>
+            </div>
+            </div>
+        <topbar title="{{name?name:'价格走势'}}"></topbar>
+    </div>
+</template>
+<script>
+const { buff } = globalThis;
+export default {
+    protected: {
+        name: "",
+        id: "38161",
+    },
+    private: {
+        options: {
+            series: {
+                lineStyle: {
+                    smooth: true,
+                    width: 2,
+                },
+            },
+            yAxis: {
+                show: true,
+            }
+        },
+        datasets: [
+            {
+                name:"buff ",
+                strokeColor: "#007AFF",
+                data: [],
+            },
+            {
+                name:"steam",
+                strokeColor: "#FFFFFF",
+                data: [],
+            },
+        ],
+        ready: false,
+        mintime: "",
+        maxtime: "",
+        chooser_show:false,
+        days_choosed:30,
+        days:[{
+    "days": 7,
+    "text": "最近7天"
+  },
+  {
+    "days": 30,
+    "text": "最近1个月"
+  },
+  {
+    "days": 90,
+    "text": "最近3个月"
+  },
+  {
+    "days": 180,
+    "text": "最近6个月"
+  },
+]
+    },
+    async onInit() {
+        await buff.ready
+        this.update()
+    },showchooser() {
+        this.chooser_show=true
+    }, choose(day) {
+        this.chooser_show = false
+        this.days_choosed = day
+        this.update()
+    }, async update() {
+        const { options, data } = await buff.getGoodsPriceHistory(this.id,this.days_choosed)
+        this.days = options.filter((e)=>!e.disabled)
+        this.mintime = new Date(data[0].price_history[0][0]).toDateString();
+            this.maxtime = new Date(data[0].price_history[data[0].price_history.length - 1][0]).toDateString();
+            let max = 0, min = Number.MAX_SAFE_INTEGER, steam_data = [], steam_cursor = 0;
+            const findnext = (timestamp) => {
+                while (steam_cursor < data[1].price_history.length) {
+                    const price = data[1].price_history[steam_cursor];
+                    if (price[0] > timestamp) {
+                        return price;
+                    }
+                    steam_cursor++;
+                }
+                return null;
+            }// 找到下一个时间戳大于当前时间戳的价格，因为steam的价格更多，会顶大图标
+            for (const price of data[0].price_history) {
+                const data1 = findnext(price[0]);
+                if (price[1] > max) max = price[1];
+                if (price[1] < min) min = price[1];
+                if(data1){
+                    if (data1[1] > max) max = data1[1];
+                    if (data1[1] < min) min = data1[1];
+                    steam_data.push(parseInt(data1[1]));
+                }
+            }
+            this.options.yAxis.min =parseInt(min - 10);
+            this.options.yAxis.max =parseInt( max+10);
+            this.datasets[0].data = data[0].price_history.map((e) => parseInt(e[1]));
+            this.datasets[1].data = steam_data;
+            this.ready = true;
+    }
+}
+</script>
+<style>
+@import url(../global.css);
+.chart{
+    height: 256px;
+}
+.desc{
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #262626;
+    margin-top: 10px;
+    font-size: 24px;
+}
+.chart-container {
+    width: 100%;
+    padding: 10px 0px;
+    background-color: #262626;
+    border-radius: 20px;
+    flex-direction: column;
+}
+text{
+    color: #ffffff;
+    font-size: 12px;
+}
+.max{
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+.min{
+    position: absolute;
+    left: 10px;
+    top:245px;
+}
+.mintime{
+    text-align: left;
+    width: 100%;
+    padding-left: 10px;
+    height: 24px;
+}
+.maxtime{
+    text-align: right;
+    margin-top: -24px;
+    padding-right: 10px;
+    width: 100%;
+}
+#choose{
+    position: absolute;
+    border-radius: 20px;
+    right: 0px;
+    height: auto;
+    flex-direction: column;
+    bottom: 60px;
+    background-color: #262626;
+}
+.choose_text{
+    padding: 10px;
+    font-size: 24px;
+}
+.true{
+    color: cornflowerblue;
+}
+</style>

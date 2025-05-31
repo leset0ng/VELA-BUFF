@@ -67,10 +67,10 @@ export default {
       this.startY = changedTouches[0].clientY
   },
     touchmove({ changedTouches }) {
-        if (!this.scrollToppd||!this.enablefresh) return
+        if (!this.scrollToppd||!this.enablefresh||!this.startY) return
         const currentY = changedTouches[0].clientY
         const deltaY = currentY - this.startY
-        if (deltaY < 0) return
+        if (deltaY < 0) return this.scrollable = true
         this.scrollable = false
         // 定义一个阻力系数，随着下拉距离增加而增大，使下拉越来越难
         const resistanceFactor = 0.003;

@@ -2,7 +2,7 @@
 <import name="betterImg" src="@components/betterImage/betterImage.ux"></import>
 <template>
   <div class="page">
-    <scroll scroll-y="true" class="content" style="padding-top:{{topbarHeight}}px;">
+    <scroll scroll-y="true" class="content">
       <!-- 功能没做因为抓包抓不明白 -->
       <!-- <img src="/common/inspect.png" onclick="inspect" style="position:absolute;top:342px;right:0px" if="{{canInspect}}"/> -->
       <betterImg url="{{img}}"
@@ -54,8 +54,6 @@
 import buffImg2 from "../../buff/buffImg2"
 import { cacheText, getCacheText } from "@utils/textCache"
 
-const { topbarHeight } = globalThis
-
 export default {
   private: {
     title: "物品详情",
@@ -73,7 +71,6 @@ export default {
     tags: [],
     stickers: [],
     sellerDesc: "",
-    topbarHeight,
   },
   onInit() {
     this.item = globalThis.itemToshow

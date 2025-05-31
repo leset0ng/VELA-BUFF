@@ -1,0 +1,121 @@
+<import name="topbar" src="@components/topbar/topbar.ux"></import>
+<import name="betterImg" src="@components/betterImage/betterImage.ux"></import>
+<template>
+  <div class="page">
+    <scroll class="content" scroll-y="true">
+        <div class="card">
+            <div class="item">
+                <betterImg url="{{img}}" wapperstyle="width: 82px;min-height:82px;border-radius: 10px;background-color: #434343;" imgstyle="object-fit: none;border-radius: 10px;" prevent-default="true"></betterImg>
+                <text class="detail">
+                    <span class="price">参考价:¥{{price}}</span>
+                    <span class="subprice">(${{subprice}})</span>
+                </text>
+            </div>
+
+            <div class="relative_goods" if="{{relative_goods.length}}">
+                <scroll class="relative_goods" style="width: 320px;padding-right:10px;padding-left:10px;margin:0px;" scroll-x="true">
+                    <text for="{{relative_goods}}" class="relative_goods_text {{$item.goods_id==id?'selected':''}}" onclick="jump($item.goods_id)">{{$item.tag_name+"\n¥"+$item.sell_min_price}}</text>
+                </scroll>
+                <img src="./left.png" style="position: absolute;left:0px"/>
+                <img src="./right.png" style="position: absolute;right:0px"/>
+            </div>
+        </div>
+
+    </scroll>
+    <img src="/common/data_chart.png" class="fab" onclick="show_history" />
+    <topbar title="{{name?name:'商品详情'}}"></topbar>
+  </div>
+</template>
+
+<script>
+const { buff, router } = globalThis
+import buffImg2 from "../../buff/buffImg2"
+import { parseData } from "@utils/buffData"
+export default {
+    public: {
+        id:"38164"
+    },
+    private: {
+        img: "",
+        items: [],
+        name: "",
+        exterior: 0,
+        price: "--",
+        subprice: "--",
+        relative_goods: [],
+        show_history_btn: false
+    },
+    async onInit() {
+        console.log(this.id)
+        /* await buff.ready */
+        this.getInfo()
+        this.items = parseData(data)
+        console.log(this.name,this.relative_goods)
+    }, async getInfo() {
+        const info = await buff.getGoodsInfo(this.id)
+        this.name = info.short_name
+        this.price = info.goods_info.steam_price_cny
+        this.subprice = info.goods_info.steam_price
+        this.relative_goods = info.relative_goods
+        this.img = buffImg2(info.goods_info.original_icon_url, 82, 82)
+    }
+    , jump(id) {
+        if (this.id == id) return
+        router.replace("pages/goodinfo",{id})
+    }
+    ,show_history(){
+        router.push("pages/chart",{id:this.id,name:this.name})
+    }
+ }
+</script>
+
+<style>
+@import url("../global.css");
+.card {
+    width: 324px;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #262626;
+    border-radius: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+.detail {
+    width: 210px;
+    min-height:82px;
+}
+.relative_goods {
+    width: 324px;
+    padding: 0px 2px;
+    margin-top: 10px;
+}
+.relative_goods_text {
+    width: 75px;
+    height: 40px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    margin:0px 1px ;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background-color: #262626;
+}
+.selected{
+    background-color: #353C48;
+}
+.item{
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.price {
+    font-size: 25px;
+    color: #FFC641;
+    font-weight: bold;
+}
+.subprice {
+    font-size: 20px;
+    color:#FFFFFF99
+}
+</style>

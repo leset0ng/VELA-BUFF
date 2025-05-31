@@ -1,7 +1,7 @@
 {
   "package": "com.lst.buff",
   "name": "BUFF",
-  "versionName": "0.2.alpha",
+  "versionName": "0.3.alpha",
   "versionCode": 1,
   "minPlatformVersion": 1000,
   "icon": "/common/logo.png",
@@ -37,7 +37,7 @@
   ],
   "config": {
     "logLevel": "log",
-    "designWidth": 480
+    "designWidth": 336
   },
   "router": {
     "entry": "pages/index",
@@ -77,6 +77,10 @@
       },
       "pages/menu": {
         "component": "menu"
+      },"pages/goodinfo": {
+        "component": "goodinfo"
+      },"pages/chart":{
+        "component": "chart"
       }
     }
   }

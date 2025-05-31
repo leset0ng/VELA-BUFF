@@ -7,7 +7,7 @@
         <text class="filter-item {{$item.selected?'selected':''}}" for="{{type.subTypes}}" if="{{type.show}}" onclick="select(type.key,$item.key)">{{$item.text}}</text>
       </div>
     </scroll>
-    <img src="/common/Clear_A.png" class="fab {{screenType}}_fab" onclick="clear"></img>
+    <img src="/common/Clear_A.png" class="fab" onclick="clear"></img>
     <topbar title="筛选"></topbar>
   </div>
 </template>
@@ -17,7 +17,6 @@ import itemTypes from '../../buff/itemTypes.js' // 导入 itemTypes.js
 export default {
   private: {
     types: [], // 定义 itemTypes 变量
-    screenType:globalThis.screenType
     },
     onInit() {
       console.log(itemTypes);
@@ -97,9 +96,6 @@ export default {
   margin: 10px;
   font-size: 32px;
   color: #ffffff;
-}
-.rect_fab {
-  right: 25px;
 }
 .card {
   display: flex;

@@ -11,6 +11,7 @@
     position: relative;
 }
 .content {
+    padding-top: 80px;
     width: 336px;
     height: 100%;
     flex-direction: row;
@@ -18,4 +19,16 @@
     align-items: flex-start;
     padding:70px 0px;
     flex-wrap: wrap;
+}
+.row{
+    flex-direction: row;
+    width: 100%;
+}
+@media screen and (shape: rect) {
+    .content{
+       padding-top: 60px;
+    }
+    .fab{
+        right: 25px;
+    }
 }

@@ -23,8 +23,8 @@ export default class BUFF{
     ready:Promise<void>
     private fetch: (uri: string, options?: RequestInit) => Promise<Response>
     private async buffFetch<T>(uri: string, options?: RequestInit) {
-        const resp = await(await this.fetch(uri, options)).json() as BuffResponse<T>
-        if (resp.code !== "OK") throw new Error(resp.message)
+        const resp = await (await this.fetch(uri, options)).json() as BuffResponse<T>
+        if (resp.code !== "OK") throw new Error(resp.msg)
         return resp.data
     }
     constructor(fetch: (uri: string, options?: RequestInit)=>Promise<Response>) {
@@ -40,8 +40,12 @@ export default class BUFF{
         }
         this.cookies.setCookie("Locale-Supported", "zh-Hans")
         this.ready = (async () => {
-            await this.cookies.ready
-            await this.getUserInfo()
+            try {
+                await this.cookies.ready
+                await this.getUserInfo()
+            } catch (error) {
+                console.log(error)
+            }
         })()
     }
     async login(abortController?: AbortController, qrcodeCallback = (uri:string,status:number) => {
@@ -122,7 +126,10 @@ export default class BUFF{
         )
     }
     async getGoods(id: number,page=1) {
-        return await this.buffFetch(`${BASE_URL}/goods/${id}?page_num=${page}&page_size=${ITEM_PER_PAGE}&tab=selling&`)
+        return await this.buffFetch<BuffData>(`${BASE_URL}/api/market/goods/sell_order?game=csgo&goods_id=${id}?page_num=${page}&page_size=${ITEM_PER_PAGE}`)
+    }
+    async getGoodsInfo(id: number) {
+       return await this.buffFetch(`${BASE_URL}/api/market/goods/info?game=csgo&goods_id=${id}`)
     }
     async getGoodsPriceHistory(id: number, days: number) {
         const { options } = await this.buffFetch<{ options: PriceHistory[] }>(`${BASE_URL}/api/market/goods/price_history/buff/days?game=csgo&goods_id=${id}`)
@@ -138,8 +145,8 @@ export default class BUFF{
         return {
             options,
             data: await Promise.all([
-                this.buffFetch<PriceHistoryData>(`${BASE_URL}/api/market/goods/price_history?game=csgo&goods_id=${id}`),
-                this.buffFetch<PriceHistoryData>(`${BASE_URL}/api/market/goods/price_history/buff?game=csgo&goods_id=${id}`)
+                this.buffFetch<PriceHistoryData>(`${BASE_URL}/api/market/goods/price_history?game=csgo&goods_id=${id}&buff_price_type=2&with_sell_num=false&currency=CNY`),
+                this.buffFetch<PriceHistoryData>(`${BASE_URL}/api/market/goods/price_history/buff?game=csgo&goods_id=${id}&buff_price_type=2&with_sell_num=false&currency=CNY`)
             ])
         }
         interface PriceHistoryData {
@@ -162,7 +169,7 @@ export default class BUFF{
 }
 
 interface BuffResponse<T> {
-    code: string, data: T , message: string
+    code: string, data: T , msg: string
 }
 interface PriceHistory {
     days: number, disabled: boolean, text: string

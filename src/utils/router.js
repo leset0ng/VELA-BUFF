@@ -25,8 +25,8 @@ export default {
         }
         return router.back()
     },
-    replace(uri, param) {
-        history[history.length - 1] = { uri, param }
-        router.replace({ uri, param })
+    replace(uri, params) {
+        history[history.length - 1] = { uri, params }
+        router.replace({ uri, params })
     }
 }
