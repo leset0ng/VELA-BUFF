@@ -100,6 +100,8 @@ export default {
   "sticker": {
     "text": "印花",
     "subType": {
+      "sticker_tournament24": "25奥斯汀",
+      "crate_sticker_pack_warhammer_capsule": "25年战锤40K",
       "sticker_tournament23": "24上海",
       "set_stkr_craft_01": "元素手作",
       "set_stkr_craft_02": "角色手作",
@@ -120,7 +122,7 @@ export default {
       "sticker_2020rmr": "2020RMR",
       "sticker_broken_fang": "狂牙大行动",
       "sticker_recoil": "压枪",
-      "warhammer_sticker": "战锤40K",
+      "warhammer_sticker": "20年战锤40K",
       "alyx_sticker_capsule": "半衰期:Alyx",
       "halo_capsule": "光环",
       "shattered_web": "裂网大行动",

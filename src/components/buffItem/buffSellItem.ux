@@ -1,0 +1,192 @@
+<import name="betterImg" src="@components/betterImage/betterImage.ux"></import>
+<template>
+  <div static class="card" style="{{style}}" onclick="routeDetail">
+    <betterImg url="{{img}}" wapperstyle="width: 135px;height: 100%;border-radius: 10px;background-color: #434343;" imgstyle="object-fit: none;border-radius: 10px;" prevent-default="true"></betterImg>
+    <div static class="detail">
+      <text static class="price">
+         ¥{{price}}
+      </text>
+      <div static class="stickers" if="{{stickers.length}}">
+        <betterImg for="{{stickers}}" url="{{$item}}" wapperstyle="width: 40px;height: 30px;" imgstyle="width: 40px;height: 30px;object-fit: contain;" prevent-default="true"></betterImg>
+      </div>
+      <text static class="exterior" if="{{exterior}}">磨损:{{exterior}}</text>
+      <div static class="progress" if="{{exterior}}">
+        <div static class="progress-1"></div>
+        <div static class="progress-2"></div>
+        <div static class="progress-3"></div>
+        <div static class="progress-4"></div>
+        <div static class="progress-5"></div>
+      </div>
+      <div static class="progress-inner" if="{{exterior}}" style="left:{{exterior*304}}px"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+const { router } = globalThis
+import buffImg2 from "../../buff/buffImg2"
+export default {
+  props: ["style","itemdata","goodsdata"],
+  data: {
+      img: "",
+      exterior: 0,
+      price: "",
+      stickers: [],
+  },
+  onInit() {
+    this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url ?? this.goodsdata?.goods_info?.icon_url), 135, 135)
+    this.exterior = this.itemdata?.asset_info?.paintwear
+    this.price = this.itemdata?.price ?? this.goodsdata.sell_min_price
+    this.stickers = this.itemdata?.asset_info?.info?.stickers?.map((item) => {
+      return buffImg2(item.img_url, 75, 56) //详情页不用再次缓存
+    })
+  },
+  routeDetail() {
+    globalThis.itemToshow = this.itemdata
+    globalThis.goodsToshow = this.goodsdata
+    if(this.itemdata)router.push("pages/itemInfo")
+    else router.push("pages/goodsInfo")
+  }
+
+}
+</script>
+
+<style>
+.card {
+    width: 324px;
+    height: 104px;
+    flex-direction: row;
+    padding: 10px;
+    background-color: #262626;
+    border-radius: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+.stickers{
+  position: absolute;
+  bottom: 26px;
+  width: 100%;
+  height: 30px;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.price{
+  font-size: 25px;
+  color: #FFC641;
+}
+.name{
+  margin: 10px 0;
+  font-size: 20px;
+  color: #FFFFFF;
+  lines:1;
+  text-overflow: ellipsis;
+
+}
+
+.detail{
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 160px;
+  height: 84px;
+}
+.exterior{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 26px;
+  padding: 3px 5px;
+  font-size: 10px;
+}
+.tags{
+  position: absolute;
+  height: 26px;
+  width: 100%;
+  opacity: 0.8;
+}
+.amount{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 26px;
+  padding: 3px 5px;
+  font-size: 15px;
+  background-color: #ffffff90;
+}
+.tag{
+  height: 26px;
+  padding: 5px;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: #696969;
+}
+.color-1 .progress-1{
+  background-color: rgb(0, 128, 0);
+}
+.color-2 .progress-2{
+  background-color: rgb(92, 184, 92);
+}
+.color-3 .progress-3{
+  background-color: rgb(240, 173, 78);
+}
+.color-4 .progress-4{
+  background-color: rgb(217, 83, 79);
+}
+.color-5 .progress-5{
+  background-color: rgb(153, 58, 56);
+}
+.progress-1{
+  width: 7%;
+}
+.progress-2{
+  width: 8%;
+}
+.progress-3{
+  width: 23%;
+}
+.progress-4{
+  width: 7%;
+}
+.progress-5{
+  width: 55%;
+}
+.progress-1 .progress-2 .progress-3 .progress-4 .progress-5 .progress{
+  height: 2px;
+}
+.progress{
+  width: 160px;
+  position: absolute;
+  bottom: 0;
+}
+.progress-inner{
+  height: 4px;
+  width: 2px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 0;
+}
+.quality{
+  color: #8650AC;
+  background-color: #14181F;
+}
+.rarity_common_background{
+    background-color: #b0c3d9
+}
+.rarity_rare_background{
+    background-color: #4b69ff
+}
+.rarity_legendary_background{
+    background-color: #d32ce6
+}
+.rarity_mythical_background{
+    background-color: #8847ff
+}
+.rarity_ancient_background{
+    background-color: #eb4b4b
+}
+.rarity_contraband_background{
+    background-color: #e4ae39
+}
+
+</style>

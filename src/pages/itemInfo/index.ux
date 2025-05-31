@@ -42,8 +42,8 @@
           <span class="tag {{ $item.class }}" if="{{$item.name!==undefined}}">{{ $item.name+" "}}</span>
         </block>
       </text>
-      <text class="desc" if="{{desc}}">
-        <span for="{{desc}}" style="color:{{$item.color}};{{$item.style}}">{{ $item.value }}</span>
+      <text class="desc" if="{{desc.length}}">
+        <span for="{{desc}}" style="color:{{$item.color}};{{$item.style}}">{{ $item.value+" " }}</span>
       </text>
     </scroll>
     <topbar title="{{title}}"></topbar>
