@@ -135,7 +135,20 @@ export default class BUFF{
                 }
             }
         }
-        return await this.buffFetch(`${BASE_URL}/api/market/goods/price_history?game=csgo&goods_id=${id}`)
+        return {
+            options,
+            data: await Promise.all([
+                this.buffFetch<PriceHistoryData>(`${BASE_URL}/api/market/goods/price_history?game=csgo&goods_id=${id}`),
+                this.buffFetch<PriceHistoryData>(`${BASE_URL}/api/market/goods/price_history/buff?game=csgo&goods_id=${id}`)
+            ])
+        }
+        interface PriceHistoryData {
+            currency: string,
+            currency_symbol: string,
+            days: number,
+            price_type: string,
+            price_history:[Number[]]
+        }
     }
     inspect(item: Item) {
         //TODO: 功能坏的，抓包抓不明白
