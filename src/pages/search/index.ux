@@ -68,7 +68,7 @@ const { topbarHeight } = globalThis
         });
   },
     routeFilter() {
-      router.push('/pages/filter');
+      router.pushNoReplace('/pages/filter');
     }
   }
 </script>

@@ -20,14 +20,19 @@ export default {
     screenType:globalThis.screenType
     },
     onInit() {
-    console.log(itemTypes);
+      console.log(itemTypes);
+    let selected = [[],[]]
+      if (globalThis.savedFilter) selected = globalThis.savedFilter.split('&').map((e) => e.split('=')[1]?.split(','))
+      console.log(selected);
     for (const key of Object.keys(itemTypes)) {
         const type = itemTypes[key]
-        const subTypes = []
+      const subTypes = []
+      let superShow = selected[0]?.includes(key);
         for (const subKey of Object.keys(type.subType)) {
-            subTypes.push({ text: type.subType[subKey], key: subKey });
+          subTypes.push({ text: type.subType[subKey], key: subKey, selected: selected[1]?.includes(subKey) });
+          if (selected[1]?.includes(subKey)) superShow = true;
         }
-      this.types.push({ text: type.text, key, subTypes});
+      this.types.push({ text: type.text, key, subTypes ,selected:selected[0]?.includes(key),show:superShow});
     }
   },
   select(key,subKey){
@@ -68,19 +73,19 @@ export default {
   },
   save(){
     const selectedTypes = [];
+    const selectedSubTypes = [];
     for (const type of this.types) {
       if (type.selected) {
         selectedTypes.push(type.key);
       } else if(type.show) {
         for (const subType of type.subTypes) {
           if (subType.selected) {
-            selectedTypes.push(subType.key);
+            selectedSubTypes.push(subType.key);
           }
         }
       }
     }
-    console.log(selectedTypes);
-    globalThis.savedCategory=selectedTypes.join(',')
+    globalThis.savedFilter=(selectedTypes.length?`categoryGrop=${selectedTypes.join(',')}`:"")+(selectedSubTypes.length?`&category=${selectedSubTypes.join(',')}`:"")
   }
  }
 </script>

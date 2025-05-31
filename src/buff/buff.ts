@@ -104,7 +104,7 @@ export default class BUFF{
         await this.fetch(BASE_URL +"/account/logout")
     }
     async getUserInfo() {
-        return this.user = (await (await this.fetch(BASE_URL +"/account/api/user/info/v2")).json()).data.user_info as User
+        return this.user = (await (await this.fetch(BASE_URL +"/account/api/user/info/v2")).json()).data?.user_info as User
     }
     async getUserInventory(page: number = 1, search: string = "") {
         if (!this.user) throw new Error("未登录！")

@@ -43,6 +43,7 @@ export default {
       exterior: 0,
       price: "",
       stickers: [],
+      amount: 0,
   },
   onInit() {
     this.img = buffImg2((this.itemdata?.img_src ?? this.goodsdata.icon_url ?? this.goodsdata?.goods_info?.icon_url), 304, 304)

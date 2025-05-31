@@ -8,14 +8,22 @@ export default {
         router.replace({ uri, params })
         console.log(history)
     },
+    pushNoReplace(uri, params) {
+        history.push({uri, params ,pushNoReplace: true})
+        router.push({ uri, params })
+        console.log(history)
+    },
     back() {
         console.log(history)
         if (history.length > 0) {
+            if(history[history.length - 1].pushNoReplace){
+                history.pop()
+                return router.back()
+            }
             history.pop()
-            router.replace(history[history.length - 1])
-        } else {
-            router.back()
+            return router.replace(history[history.length - 1])
         }
+        return router.back()
     },
     replace(uri, param) {
         history[history.length - 1] = { uri, param }
