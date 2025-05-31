@@ -1,4 +1,4 @@
-import { Item } from "./buffgoods"
+import { BuffData, Item } from "./buffgoods"
 import Cookies from "./cookiesManager"
 import getDeviceID from "./deviceID"
 import { User } from "./user"
@@ -22,8 +22,12 @@ export default class BUFF{
     get loginStatus() { return this.user != null }
     ready:Promise<void>
     private fetch: (uri: string, options?: RequestInit) => Promise<Response>
-    private bigFetch: (uri: string, options?: RequestInit) => Promise<Response>
-    constructor(fetch: (uri: string, options?: RequestInit)=>Promise<Response>,bigFetch?: (uri: string, options?: RequestInit)=>Promise<Response>) {
+    private async buffFetch<T>(uri: string, options?: RequestInit) {
+        const resp = await(await this.fetch(uri, options)).json() as BuffResponse<T>
+        if (resp.code !== "OK") throw new Error(resp.message)
+        return resp.data
+    }
+    constructor(fetch: (uri: string, options?: RequestInit)=>Promise<Response>) {
         this.cookies = new Cookies()
         this.fetch = async (uri, options) => {
             const resp=await fetch(uri, {
@@ -34,11 +38,6 @@ export default class BUFF{
             this.cookies.setCookies(resp.headers["set-cookie"])
             return resp
         }
-        if(!bigFetch)bigFetch=fetch
-        this.bigFetch = (uri, options) => bigFetch(uri, {
-            ...options,
-            headers: { ...this.headers, ...options?.headers }
-        })
         this.cookies.setCookie("Locale-Supported", "zh-Hans")
         this.ready = (async () => {
             await this.cookies.ready
@@ -51,7 +50,8 @@ export default class BUFF{
         const checkCanceled = () => { if (abortController?.signal.aborted) throw new Error("用户已取消登录") }
         await this.fetch(BASE_URL+"/account/login")
         if (!this.cookies.getCookie("csrf_token")) throw new Error("csrf_token not found")
-        if (!(await (await this.fetch(BASE_URL +"/account/api/qr_code_login_open")).json())?.data["use_qr_code_login"]) throw new Error("qr_code_create failed")
+        const loginOpenRes = await this.buffFetch<{ use_qr_code_login: boolean }>(BASE_URL +"/account/api/qr_code_login_open")
+        if (!loginOpenRes.use_qr_code_login) throw new Error("qr_code_create failed")
         checkCanceled()
         const { code, data } = (await (await this.fetch(BASE_URL +"/account/api/qr_code_create",
             {
@@ -98,32 +98,44 @@ export default class BUFF{
         this.getUserInfo()
         return true
     }
-    async logout() {
-        this.cookies.clear()
-        this.user = null
-        await this.fetch(BASE_URL +"/account/logout")
-    }
+
     async getUserInfo() {
-        return this.user = (await (await this.fetch(BASE_URL +"/account/api/user/info/v2")).json()).data?.user_info as User
+        return this.user = (await this.buffFetch<{ user_info: User }>(BASE_URL +"/account/api/user/info/v2")).user_info
     }
     async getUserInventory(page: number = 1, search: string = "") {
         if (!this.user) throw new Error("未登录！")
         const { code, data } = await (await this.fetch(`${BASE_URL}/api/market/steam_inventory?game=csgo&force=0&page_num=${page}&page_size=${ITEM_PER_PAGE}&fold=true&search=${search}&steamid=${this.user?.steamid}&state=all`)).json()
         if (code !== "OK") throw new Error(data)
-        return data
+        return data as BuffData
     }
     async getPopular() {
-        return (await (await this.fetch(BASE_URL +"/api/index/popular_sell_order")).json()).data
+        return await this.buffFetch<BuffData>(BASE_URL +"/api/index/popular_sell_order")
     }
     async getItemDesc(item: Item) {
-        return (await (await this.fetch(`${BASE_URL}/api/market/item_desc_detail?appid=${item.appid}&classid=${item.asset_info?.classid}&instanceid=${item.asset_info?.instanceid}&assetid=${item.asset_info?.assetid}${item.id?'&sell_order_id='+item.id:""}`)).json()).data
+        return await this.buffFetch(`${BASE_URL}/api/market/item_desc_detail?appid=${item.appid}&classid=${item.asset_info?.classid}&instanceid=${item.asset_info?.instanceid}&assetid=${item.asset_info?.assetid}${item.id?'&sell_order_id='+item.id:""}`)
     }
     async search(page: number = 1, name: string, param: string) {
         if (!name) name = ""
         if (!param) param = ""
-        return (await (await this.fetch(
+        return await this.buffFetch<BuffData>(
             encodeURI(`${BASE_URL}/api/market/goods?game=csgo&page_num=${page}&page_size=${ITEM_PER_PAGE}&tab=selling&search=${name}&${param}`),
-        )).json()).data
+        )
+    }
+    async getGoods(id: number,page=1) {
+        return await this.buffFetch(`${BASE_URL}/goods/${id}?page_num=${page}&page_size=${ITEM_PER_PAGE}&tab=selling&`)
+    }
+    async getGoodsPriceHistory(id: number, days: number) {
+        const { options } = await this.buffFetch<{ options: PriceHistory[] }>(`${BASE_URL}/api/market/goods/price_history/buff/days?game=csgo&goods_id=${id}`)
+        if (options.length === 0) throw new Error("没有价格历史")
+        if (!days) {
+            for (const option of options) {
+                if (!option.disabled) {
+                    days = option.days
+                    break
+                }
+            }
+        }
+        return await this.buffFetch(`${BASE_URL}/api/market/goods/price_history?game=csgo&goods_id=${id}`)
     }
     inspect(item: Item) {
         //TODO: 功能坏的，抓包抓不明白
@@ -134,4 +146,11 @@ export default class BUFF{
             method:"POST"
         })
     }
+}
+
+interface BuffResponse<T> {
+    code: string, data: T , message: string
+}
+interface PriceHistory {
+    days: number, disabled: boolean, text: string
 }
